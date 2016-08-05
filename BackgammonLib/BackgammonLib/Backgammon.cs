@@ -49,7 +49,7 @@ namespace BackgammonLib
                 var count = 0;
                 Parallel.For(18, 24, (i) =>
                 {
-                    if (_board.Triangles[i].Type == CheckerType.White)
+                    if (_board.Triangles[i].Type == CheckerType.White && _board.Triangles[i].CheckersCount > 1)
                     {
                         Interlocked.Increment(ref count);
                     }
@@ -73,7 +73,7 @@ namespace BackgammonLib
                 var count = 0;
                 Parallel.For(0, 6, (i) =>
                 {
-                    if (_board.Triangles[i].Type == CheckerType.Black)
+                    if (_board.Triangles[i].Type == CheckerType.Black && _board.Triangles[i].CheckersCount > 1)
                     {
                         Interlocked.Increment(ref count);
                     }

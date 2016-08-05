@@ -2,9 +2,9 @@
 
 namespace BackgammonConsoleApp
 {
-    internal struct GameB
+    internal struct MyGameBoard
     {
-        public GameB(string value)
+        public MyGameBoard(string value)
         {
             FgColor = ConsoleColor.Black;
             Value = value;

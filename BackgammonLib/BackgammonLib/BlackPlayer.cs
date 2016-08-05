@@ -18,6 +18,10 @@ namespace BackgammonLib
 
         internal override bool Move(Backgammon game, int triangle, int move)
         {
+            if (move != game._dice.FirstCube && move != game._dice.SecondCube)
+            {
+                return false;
+            }
             if (triangle <= move)
             {
                 if (MoveToOutsideBar(game, triangle, move))
@@ -140,7 +144,7 @@ namespace BackgammonLib
                     game._dice.DecrementSteps(game);
                 }
             }
-            if (fromDeadBar && _deadCheckersBar.Bar.Count > 2)
+            if (fromDeadBar && _deadCheckersBar.Bar.Count > 1)
             {
                 if (move != 24 - game._dice.FirstCube + 1 && move != 24 - game._dice.SecondCube + 1)
                 {

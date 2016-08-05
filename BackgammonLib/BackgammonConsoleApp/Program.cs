@@ -113,13 +113,13 @@ namespace BackgammonConsoleApp
         {
             Console.WriteLine(" 13 14 15 16 17 18 19 20 21 22 23 24 ");
             var max = MaxCheckers(game);
-            var myBoard = new GameB[max * 2, 12];
+            var myBoard = new MyGameBoard[max * 2, 12];
 
             for (var i = 0; i < max * 2; ++i)
             {
                 for (var j = 0; j < 12; ++j)
                 {
-                    myBoard[i, j] = new GameB("   ");
+                    myBoard[i, j] = new MyGameBoard("   ");
                 }
             }
 
