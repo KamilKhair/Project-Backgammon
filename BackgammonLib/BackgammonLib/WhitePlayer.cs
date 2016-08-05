@@ -15,7 +15,7 @@ namespace BackgammonLib
 
         internal override bool Roll(Backgammon game)
         {
-            return game.Dice.Steps == 0 && game.Dice.RollDice(game, CheckerType.Black);
+            return game.Dice.Steps == 0 && game.Dice.RollDice(game, CheckerType.White);
         }
 
         internal override bool Move(Backgammon game, int triangle, int move)
@@ -85,22 +85,25 @@ namespace BackgammonLib
             {
                 if (fromDeadBar)
                 {
-                    if (move != game._dice.FirstCube)
+                    if (move != game._dice.FirstCube && move != game._dice.SecondCube)
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    if (move != game._dice.FirstCube)
+                    if (move != game._dice.FirstCube && move != game._dice.SecondCube)
                     {
                         return false;
                     }
                 }
                 game._dice.DecrementSteps(game);
-                if (game._dice.Steps == 0)
+                if (game._dice.Steps == 2)
                 {
                     game._dice.ResetFirstCube();
+                }
+                if (game._dice.Steps == 0)
+                {
                     game._dice.ResetSecondCube();
                 }
             }
@@ -224,7 +227,7 @@ namespace BackgammonLib
             }
             if (triangle + move > 25)
             {
-                if (!AllCheckersInLocalArea(game, 0, triangle))
+                if (!AllCheckersInLocalArea(game, 0, triangle - 1))
                 {
                     return false;
                 }
@@ -370,14 +373,20 @@ namespace BackgammonLib
                          game._board.Triangles[i + firstCube].Type == CheckerType.White ||
                          game._board.Triangles[i + firstCube].Type == CheckerType.None)
                 {
-                    canMove = true;
+                    if (firstCube != 0)
+                    {
+                        canMove = true;
+                    }
                 }
                 else if (game._board.Triangles[i + secondCube].Type == CheckerType.Black &&
                          game._board.Triangles[i + secondCube].CheckersCount == 1 ||
                          game._board.Triangles[i + secondCube].Type == CheckerType.White ||
                          game._board.Triangles[i + secondCube].Type == CheckerType.None)
                 {
-                    canMove = true;
+                    if (secondCube != 0)
+                    {
+                        canMove = true;
+                    }
                 }
             });
 

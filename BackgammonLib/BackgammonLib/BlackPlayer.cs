@@ -83,22 +83,25 @@ namespace BackgammonLib
             {
                 if (fromDeadBar)
                 {
-                    if (move != 24 - game._dice.FirstCube + 1)
+                    if (move != 24 - game._dice.FirstCube + 1 && move != 24 - game._dice.SecondCube + 1)
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    if (move != game._dice.FirstCube)
+                    if (move != game._dice.FirstCube && move != game._dice.SecondCube)
                     {
                         return false;
                     }
                 }
                 game._dice.DecrementSteps(game);
-                if (game._dice.Steps == 0)
+                if (game._dice.Steps == 2)
                 {
                     game._dice.ResetFirstCube();
+                }
+                if (game._dice.Steps == 0)
+                {
                     game._dice.ResetSecondCube();
                 }
             }
@@ -226,7 +229,7 @@ namespace BackgammonLib
             }
             if (triangle < move)
             {
-                if (!AllCheckersInLocalArea(game, triangle, 24))
+                if (!AllCheckersInLocalArea(game, triangle, 24 - triangle))
                 {
                     return false;
                 }
@@ -304,11 +307,11 @@ namespace BackgammonLib
         {
             if (_deadCheckersBar.Bar.Count > 0)
             {
-                if (game._dice.FirstCube != 0 && game._board.Triangles[24 - game._dice.FirstCube].Type == CheckerType.Black)
+                if (game._dice.FirstCube != 0 && game._board.Triangles[24 - game._dice.FirstCube].Type == CheckerType.White)
                 {
                     if (game._dice.FirstCube != 0 && game._board.Triangles[24 - game._dice.FirstCube].CheckersCount > 1)
                     {
-                        if (game._dice.SecondCube != 0 && game._board.Triangles[24 - game._dice.SecondCube].Type == CheckerType.Black)
+                        if (game._dice.SecondCube != 0 && game._board.Triangles[24 - game._dice.SecondCube].Type == CheckerType.White)
                         {
                             if (game._dice.SecondCube != 0 && game._board.Triangles[24 - game._dice.SecondCube].CheckersCount > 1)
                             {
@@ -374,14 +377,20 @@ namespace BackgammonLib
                          game._board.Triangles[i - firstCube].Type == CheckerType.Black ||
                          game._board.Triangles[i - firstCube].Type == CheckerType.None)
                 {
-                    canMove = true;
+                    if (firstCube != 0)
+                    {
+                        canMove = true;
+                    }
                 }
                 else if (game._board.Triangles[i - secondCube].Type == CheckerType.White &&
                          game._board.Triangles[i - secondCube].CheckersCount == 1 ||
                          game._board.Triangles[i - secondCube].Type == CheckerType.Black ||
                          game._board.Triangles[i - secondCube].Type == CheckerType.None)
                 {
-                            canMove = true;
+                    if (secondCube != 0)
+                    {
+                        canMove = true;
+                    }
                 }
             });
 

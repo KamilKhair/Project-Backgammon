@@ -1,29 +1,15 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using BackgammonLib;
 
 namespace BackgammonConsoleApp
 {
-    internal struct GameB
-    {
-        public GameB(string value)
-        {
-            FgColor = ConsoleColor.Black;
-            Value = value;
-        }
-
-        public string Value { get; set; }
-        public ConsoleColor FgColor { get; set; }
-    }
-
     public class Program
     {
         public static void Main(string[] args)
         {
 
             var game = new Backgammon();
-
             while (!game.IsGameOver)
             {
                 Console.Clear();
@@ -31,16 +17,6 @@ namespace BackgammonConsoleApp
                 Console.WriteLine($"Turn: {game.Turn} Player!");
                 if (game.Dice.Steps == 0)
                 {
-                    //Console.WriteLine("Enter \"R\" or \"r\" to Roll");
-                    //var operation = Console.ReadLine();
-                    //while (operation != "r" && operation != "R")
-                    //{
-                    //    Console.Clear();
-                    //    DisplayOnConsole(game);
-                    //    Console.WriteLine($"Turn: {game.Turn} Player!");
-                    //    Console.WriteLine("Enter \"R\" or \"r\" to Roll");
-                    //    operation = Console.ReadLine();
-                    //}
                     if (game.Turn == CheckerType.Black)
                     {
                         game.BlackPlayerRoll();
@@ -129,6 +105,8 @@ namespace BackgammonConsoleApp
                     }
                 }
             }
+            var winner = game.Winner == CheckerType.Black ? "Black Player" : "White Player";
+            Console.WriteLine($"The Winner is {winner}!");
         }
 
         public static void DisplayOnConsole(Backgammon game)
@@ -157,7 +135,7 @@ namespace BackgammonConsoleApp
                         {
                             ++i;
                         }
-                        myBoard[i, checker.CheckerTraingle - 12].Value = " ()"; // checker.CheckerID < 10 ? " 0" + checker.CheckerID : " " +checker.CheckerID;
+                        myBoard[i, checker.CheckerTraingle - 12].Value = " ()";
                         myBoard[i, checker.CheckerTraingle - 12].FgColor = checker.CheckerType == CheckerType.Black
                             ? ConsoleColor.Black
                             : ConsoleColor.White;
@@ -169,7 +147,7 @@ namespace BackgammonConsoleApp
                         {
                             --i;
                         }
-                        myBoard[i, 12 - checker.CheckerTraingle - 1].Value = " ()"; //checker.CheckerID < 10 ? " 0" + checker.CheckerID : " " +checker.CheckerID;
+                        myBoard[i, 12 - checker.CheckerTraingle - 1].Value = " ()";
                         myBoard[i, 12 - checker.CheckerTraingle - 1].FgColor = checker.CheckerType == CheckerType.Black
                             ? ConsoleColor.Black
                             : ConsoleColor.White;
