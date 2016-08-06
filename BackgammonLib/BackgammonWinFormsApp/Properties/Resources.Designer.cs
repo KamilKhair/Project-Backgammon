@@ -130,7 +130,8 @@ namespace BackgammonWinFormsApp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turn: Black.
+        ///   Looks up a localized string similar to Turn: 
+        ///Black Player.
         /// </summary>
         internal static string BackgammonForm_BackgammonForm_Turn__Black {
             get {
@@ -139,7 +140,8 @@ namespace BackgammonWinFormsApp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turn: White.
+        ///   Looks up a localized string similar to Turn: 
+        ///White Player.
         /// </summary>
         internal static string BackgammonForm_BackgammonForm_Turn__White {
             get {

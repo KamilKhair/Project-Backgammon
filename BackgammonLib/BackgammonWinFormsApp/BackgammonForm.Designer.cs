@@ -386,7 +386,7 @@
             // 
             this._turnLabel.AutoSize = true;
             this._turnLabel.Font = new System.Drawing.Font("Tw Cen MT Condensed Extra Bold", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._turnLabel.Location = new System.Drawing.Point(823, 24);
+            this._turnLabel.Location = new System.Drawing.Point(828, 34);
             this._turnLabel.Name = "_turnLabel";
             this._turnLabel.Size = new System.Drawing.Size(75, 32);
             this._turnLabel.TabIndex = 29;
@@ -395,7 +395,7 @@
             // _rollButton
             // 
             this._rollButton.Font = new System.Drawing.Font("Tw Cen MT Condensed Extra Bold", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._rollButton.Location = new System.Drawing.Point(854, 63);
+            this._rollButton.Location = new System.Drawing.Point(852, 112);
             this._rollButton.Name = "_rollButton";
             this._rollButton.Size = new System.Drawing.Size(86, 36);
             this._rollButton.TabIndex = 30;
@@ -454,7 +454,7 @@
             // 
             // _firstCubePictueBox
             // 
-            this._firstCubePictueBox.Location = new System.Drawing.Point(837, 105);
+            this._firstCubePictueBox.Location = new System.Drawing.Point(840, 160);
             this._firstCubePictueBox.Name = "_firstCubePictueBox";
             this._firstCubePictueBox.Size = new System.Drawing.Size(52, 52);
             this._firstCubePictueBox.TabIndex = 32;
@@ -462,7 +462,7 @@
             // 
             // _secondCubePictueBox
             // 
-            this._secondCubePictueBox.Location = new System.Drawing.Point(904, 105);
+            this._secondCubePictueBox.Location = new System.Drawing.Point(901, 160);
             this._secondCubePictueBox.Name = "_secondCubePictueBox";
             this._secondCubePictueBox.Size = new System.Drawing.Size(52, 52);
             this._secondCubePictueBox.TabIndex = 33;
