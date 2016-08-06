@@ -14,6 +14,7 @@ namespace BackgammonLib
             if (Bar.Count != 15) return;
             game.GameOver = true;
             game._winner = CheckerType.White;
+            game.RaiseGameFinishedEvent();
         }
 
         public override string ToString()

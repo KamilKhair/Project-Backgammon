@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace BackgammonLib
 {
+    public delegate void GameFinishedEventHandler(object sender, EventArgs e);
     public class Backgammon
     {
         public Backgammon()
@@ -19,6 +21,18 @@ namespace BackgammonLib
         internal bool GameOver = false;
         internal CheckerType _winner = CheckerType.None;
         internal CheckerType _turn = CheckerType.Black;
+
+        public event GameFinishedEventHandler GameFinished;
+
+        protected virtual void OnGameFinished(EventArgs e)
+        {
+            GameFinished?.Invoke(this, e);
+        }
+
+        internal void RaiseGameFinishedEvent()
+        {
+            OnGameFinished(EventArgs.Empty);
+        }
 
         public CheckerType Turn
         {
