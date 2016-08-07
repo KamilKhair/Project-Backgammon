@@ -443,8 +443,56 @@ namespace BackgammonWinFormsApp
             }
         }
 
-        private void NoAvailableMovesListener(object sender, EventArgs e)
+        private void NoAvailableMovesListener(object sender, NoAvailableMovesEventArgs e)
         {
+            switch (e.FirstCube)
+            {
+                case 1:
+                    _firstCubePictueBox.Image = Resources._1;
+                    break;
+                case 2:
+                    _firstCubePictueBox.Image = Resources._2;
+                    break;
+                case 3:
+                    _firstCubePictueBox.Image = Resources._3;
+                    break;
+                case 4:
+                    _firstCubePictueBox.Image = Resources._4;
+                    break;
+                case 5:
+                    _firstCubePictueBox.Image = Resources._5;
+                    break;
+                case 6:
+                    _firstCubePictueBox.Image = Resources._6;
+                    break;
+                default:
+                    _firstCubePictueBox.Image = Resources.x;
+                    break;
+            }
+            switch (e.SecondCube)
+            {
+                case 1:
+                    _secondCubePictueBox.Image = Resources._1;
+                    break;
+                case 2:
+                    _secondCubePictueBox.Image = Resources._2;
+                    break;
+                case 3:
+                    _secondCubePictueBox.Image = Resources._3;
+                    break;
+                case 4:
+                    _secondCubePictueBox.Image = Resources._4;
+                    break;
+                case 5:
+                    _secondCubePictueBox.Image = Resources._5;
+                    break;
+                case 6:
+                    _secondCubePictueBox.Image = Resources._6;
+                    break;
+                default:
+                    _secondCubePictueBox.Image = Resources.x;
+                    break;
+            }
             MessageBox.Show(@"No Available Moves !");
         }
     }

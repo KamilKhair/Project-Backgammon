@@ -43,7 +43,7 @@ namespace BackgammonLib
                 if (!_game.BlackPlayer.CheckIfThereAreAvailableMoves())
                 {
                     _game.Turn = CheckerType.White;
-                    _game.RaiseNoAvailableMovesEvent();
+                    _game.RaiseNoAvailableMovesEvent(FirstCube, SecondCube);
                     ResetDice();
                 }
             }
@@ -52,7 +52,7 @@ namespace BackgammonLib
                 if (!_game.WhitePlayer.CheckIfThereAreAvailableMoves())
                 {
                     _game.Turn = CheckerType.Black;
-                    _game.RaiseNoAvailableMovesEvent();
+                    _game.RaiseNoAvailableMovesEvent(FirstCube, SecondCube);
                     ResetDice();
                 }
             }

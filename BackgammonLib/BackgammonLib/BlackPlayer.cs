@@ -32,6 +32,10 @@ namespace BackgammonLib
             UpdateDice(move);
             if (!CheckIfThereAreAvailableMoves())
             {
+                if (Dice.Steps > 0)
+                {
+                    Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
+                }
                 Game.Turn = CheckerType.White;
                 Dice.ResetSecondCube();
             }
@@ -106,6 +110,10 @@ namespace BackgammonLib
                 UpdateDiceAfterMoveFromDeadBar(triangle);
                 if (!CheckIfThereAreAvailableMoves())
                 {
+                    if (Dice.Steps > 0)
+                    {
+                        Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
+                    }
                     Game.Turn = CheckerType.White;
                     Dice.ResetSecondCube();
                 }
@@ -124,6 +132,10 @@ namespace BackgammonLib
             UpdateDiceAfterMoveFromDeadBar(triangle);
             if (!CheckIfThereAreAvailableMoves())
             {
+                if (Dice.Steps > 0)
+                {
+                    Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
+                }
                 Game.Turn = CheckerType.White;
                 Dice.ResetSecondCube();
             }
@@ -160,6 +172,10 @@ namespace BackgammonLib
                 return false;
             }
             if (move != Dice.FirstCube && move != Dice.SecondCube)
+            {
+                return false;
+            }
+            if (DeadCheckersBar.Bar.Count > 0)
             {
                 return false;
             }

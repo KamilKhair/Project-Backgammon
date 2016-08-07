@@ -32,7 +32,7 @@ namespace BackgammonLib
             GameFinished?.Invoke(this, e);
         }
 
-        protected virtual void WhwnNoAvailableMoves(EventArgs e)
+        protected virtual void WhenNoAvailableMoves(NoAvailableMovesEventArgs e)
         {
             NoAvailableMoves?.Invoke(this, e);
         }
@@ -42,9 +42,9 @@ namespace BackgammonLib
             OnGameFinished(EventArgs.Empty);
         }
 
-        internal void RaiseNoAvailableMovesEvent()
+        internal void RaiseNoAvailableMovesEvent(int firstCube, int secondCube)
         {
-            WhwnNoAvailableMoves(EventArgs.Empty);
+            WhenNoAvailableMoves(new NoAvailableMovesEventArgs(firstCube, secondCube));
         }
 
         public CheckerType Turn { get; internal set; }
