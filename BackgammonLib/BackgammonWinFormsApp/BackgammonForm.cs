@@ -62,11 +62,11 @@ namespace BackgammonWinFormsApp
             var start = 0;
             int ratio = 30;
             var enumerable = bar as Checker[] ?? bar.ToArray();
-            if (enumerable.Count() != 0 && enumerable.Count() * 30 > 223)
+            if (enumerable.Length != 0 && enumerable.Length * 30 > 223)
             {
-                ratio = 223 / enumerable.Count();
+                ratio = 223 / enumerable.Length;
             }
-            for (var i = 0; i < enumerable.Count(); ++i)
+            for (var i = 0; i < enumerable.Length; ++i)
             {
                 var brush = enumerable.ElementAt(i).CheckerType == CheckerType.Black ? new HatchBrush(HatchStyle.DarkVertical, Color.Black) : new HatchBrush(HatchStyle.DarkVertical, Color.White);
                 if (pixtureBox < 12)
@@ -109,7 +109,6 @@ namespace BackgammonWinFormsApp
         {
             for (int i = 0; i < 28; i++)
             {
-                var graphics = _triangles[i].CreateGraphics();
                 _triangles[i].CreateGraphics().Clear(Color.Aquamarine);
             }
         }
@@ -233,8 +232,8 @@ namespace BackgammonWinFormsApp
             var triangle = sender as PictureBox;
             var graphics = triangle?.CreateGraphics();
             var name = triangle?.Name;
-            int index;
-            if (!int.TryParse(name[name.Length - 2].ToString() + name[name.Length - 1].ToString(), out index))
+            int index = 0;
+            if (name != null && !int.TryParse(name[name.Length - 2].ToString() + name[name.Length - 1].ToString(), out index))
             {
                 index = int.Parse(name[name.Length - 1].ToString());
             }
@@ -305,7 +304,7 @@ namespace BackgammonWinFormsApp
                     {
                         var graphics2 = _triangles[firstchoice].CreateGraphics();
                         var pen2 = new Pen(Color.Green, 5);
-                        graphics2?.DrawRectangle(pen2, 0, 0, 50, 223);
+                        graphics2.DrawRectangle(pen2, 0, 0, 50, 223);
                     }
                     if (secondChoice >= 1 && _game.Dice.SecondCube > 0 &&
                         (_game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.Black ||
@@ -315,7 +314,7 @@ namespace BackgammonWinFormsApp
                     {
                         var graphics2 = _triangles[secondChoice].CreateGraphics();
                         var pen3 = new Pen(Color.Green, 5);
-                        graphics2?.DrawRectangle(pen3, 0, 0, 50, 223);
+                        graphics2.DrawRectangle(pen3, 0, 0, 50, 223);
                     }
                     _fromTriangle = index;
                     if (index == 25)
@@ -378,7 +377,7 @@ namespace BackgammonWinFormsApp
                     {
                         var graphics2 = _triangles[firstchoice].CreateGraphics();
                         var pen2 = new Pen(Color.Green, 5);
-                        graphics2?.DrawRectangle(pen2, 0, 0, 50, 223);
+                        graphics2.DrawRectangle(pen2, 0, 0, 50, 223);
                     }
                     if (secondChoice <= 24 && _game.Dice.SecondCube > 0 &&
                         (_game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.White ||
@@ -388,7 +387,7 @@ namespace BackgammonWinFormsApp
                     {
                         var graphics2 = _triangles[secondChoice].CreateGraphics();
                         var pen3 = new Pen(Color.Green, 5);
-                        graphics2?.DrawRectangle(pen3, 0, 0, 50, 223);
+                        graphics2.DrawRectangle(pen3, 0, 0, 50, 223);
                     }
                     _fromTriangle = index;
                     if (index == 0)
@@ -432,7 +431,7 @@ namespace BackgammonWinFormsApp
         private void GameFinishedListener(object o, EventArgs e)
         {
             var winner = _game.Winner == CheckerType.Black ? "Black Player" : "White Player";
-            var dialogResult = MessageBox.Show($"The winner is {winner}!, Start a new game?", $"Game Finished!", MessageBoxButtons.YesNo);
+            var dialogResult = MessageBox.Show($"The winner is {winner}!, Start a new game?", @"Game Finished!", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
                 Application.Restart();

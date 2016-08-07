@@ -48,6 +48,7 @@
     <Compile Include="DeadCheckersBar.cs" />
     <Compile Include="Dice.cs" />
     <Compile Include="GameBoard.cs" />
+    <Compile Include="GameFinishedEventHandler.cs" />
     <Compile Include="OutSideCheckersBar.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Triangle.cs" />

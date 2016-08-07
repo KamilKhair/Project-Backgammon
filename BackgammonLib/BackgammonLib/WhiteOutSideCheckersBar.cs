@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace BackgammonLib
 {
@@ -13,7 +9,7 @@ namespace BackgammonLib
             Bar.Push(checker);
             if (Bar.Count != 15) return;
             game.GameOver = true;
-            game._winner = CheckerType.White;
+            game.Winner = CheckerType.White;
             game.RaiseGameFinishedEvent();
         }
 

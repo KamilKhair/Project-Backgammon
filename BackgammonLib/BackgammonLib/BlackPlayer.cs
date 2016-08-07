@@ -5,42 +5,42 @@ namespace BackgammonLib
 {
     internal class BlackPlayer : Player
     {
-        internal BlackPlayer(string name, CheckerType t) : base(name, t)
+        internal BlackPlayer(CheckerType t, GameBoard board, Dice dice, Backgammon game) : base(t, board, dice, game)
         {
-            _deadCheckersBar = new BlackDeadCheckersBar();
-            _outSideCheckersBar = new BlackOutSideCheckersBar();
+            DeadCheckersBar = new BlackDeadCheckersBar();
+            OutSideCheckersBar = new BlackOutSideCheckersBar();
         }
 
-        internal override bool Roll(Backgammon game)
+        internal override bool Roll()
         {
-            return game.Dice.Steps == 0 && game.Dice.RollDice(game, CheckerType.Black);
+            return Dice.Steps == 0 && Dice.RollDice(CheckerType.Black);
         }
 
-        internal override bool Move(Backgammon game, int triangle, int move)
+        internal override bool Move(int triangle, int move)
         {
-            if (move != game._dice.FirstCube && move != game._dice.SecondCube)
+            if (move != Dice.FirstCube && move != Dice.SecondCube)
             {
                 return false;
             }
             if (triangle <= move)
             {
-                if (MoveToOutsideBar(game, triangle, move))
+                if (MoveToOutsideBar(triangle, move))
                 {
                     return true;
                 }
             }
-            if (!CanMove(game, triangle, move))
+            if (!CanMove(triangle, move))
             {
                 return false;
             }
             
-            PerformMove(game, triangle, move);
-            UpdateTurn(game);
+            PerformMove(triangle, move);
+            UpdateTurn();
 
             return true;
         }
 
-        private bool CanMove(Backgammon game, int triangle, int move)
+        private bool CanMove(int triangle, int move)
         {
             if (move > 6 || move < 1)
             {
@@ -50,12 +50,12 @@ namespace BackgammonLib
             {
                 return false;
             }
-            if (game._blackPlayer._deadCheckersBar.Bar.Count > 0)
+            if (DeadCheckersBar.Bar.Count > 0)
             {
                 return false;
             }
 
-            if (game._dice.Steps == 0)
+            if (Dice.Steps == 0)
             {
                 return false;
             }
@@ -66,91 +66,91 @@ namespace BackgammonLib
                 return false;
             }
 
-            var destinationTriangle = game._board.Triangles[destination];
+            var destinationTriangle = Board.Triangles[destination];
             if (destinationTriangle.Type == CheckerType.White && destinationTriangle.CheckersCount > 1)
             {
                 return false;
             }
 
-            var sourceTriangle = game._board.Triangles[triangle - 1];
+            var sourceTriangle = Board.Triangles[triangle - 1];
             if (sourceTriangle.IsEmpty || sourceTriangle.Type == CheckerType.White)
             {
                 return false;
             }
 
-            return UpdateDice(game, move);
+            return UpdateDice(move);
         }
 
-        private bool UpdateDice(Backgammon game, int move, bool fromDeadBar = false)
+        private bool UpdateDice(int move, bool fromDeadBar = false)
         {
-            if (game._dice.RolledDouble)
+            if (Dice.RolledDouble)
             {
                 if (fromDeadBar)
                 {
-                    if (move != 24 - game._dice.FirstCube + 1 && move != 24 - game._dice.SecondCube + 1)
+                    if (move != 24 - Dice.FirstCube + 1 && move != 24 - Dice.SecondCube + 1)
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    if (move != game._dice.FirstCube && move != game._dice.SecondCube)
+                    if (move != Dice.FirstCube && move != Dice.SecondCube)
                     {
                         return false;
                     }
                 }
-                game._dice.DecrementSteps(game);
-                if (game._dice.Steps == 2)
+                Dice.DecrementSteps();
+                if (Dice.Steps == 2)
                 {
-                    game._dice.ResetFirstCube();
+                    Dice.ResetFirstCube();
                 }
-                if (game._dice.Steps == 0)
+                if (Dice.Steps == 0)
                 {
-                    game._dice.ResetSecondCube();
+                    Dice.ResetSecondCube();
                 }
             }
             else
             {
                 if (fromDeadBar)
                 {
-                    if (move == 24 - game._dice.FirstCube + 1)
+                    if (move == 24 - Dice.FirstCube + 1)
                     {
-                        game._dice.ResetFirstCube();
+                        Dice.ResetFirstCube();
                     }
-                    else if (move == 24 - game._dice.SecondCube + 1)
+                    else if (move == 24 - Dice.SecondCube + 1)
                     {
-                        game._dice.ResetSecondCube();
+                        Dice.ResetSecondCube();
                     }
                     else
                     {
                         return false;
                     }
-                    game._dice.DecrementSteps(game);
+                    Dice.DecrementSteps();
                 }
                 else
                 {
-                    if (move == game._dice.FirstCube)
+                    if (move == Dice.FirstCube)
                     {
-                        game._dice.ResetFirstCube();
+                        Dice.ResetFirstCube();
                     }
-                    else if (move == game._dice.SecondCube)
+                    else if (move == Dice.SecondCube)
                     {
-                        game._dice.ResetSecondCube();
+                        Dice.ResetSecondCube();
                     }
                     else
                     {
                         return false;
                     }
-                    game._dice.DecrementSteps(game);
+                    Dice.DecrementSteps();
                 }
             }
             return true;
         }
 
-        private void PerformMove(Backgammon game, int triangle, int move)
+        private void PerformMove(int triangle, int move)
         {
-            var destinationTriangle = game._board.Triangles[triangle - 1 - move];
-            var sourceTriangle = game._board.Triangles[triangle - 1];
+            var destinationTriangle = Board.Triangles[triangle - 1 - move];
+            var sourceTriangle = Board.Triangles[triangle - 1];
             var sourceChecker = sourceTriangle.CheckersStack.Pop();
 
             //Option 1: Moving to a triangle which has only one white checker.
@@ -159,7 +159,7 @@ namespace BackgammonLib
                 var destinationChecker = destinationTriangle.CheckersStack.Pop();
                 destinationChecker.CheckerTriangle = -1; // -1 = Dead;
                 destinationChecker.IsAlive = false;
-                game._whitePlayer._deadCheckersBar.AddToBar(destinationChecker);
+                Game.WhitePlayer.DeadCheckersBar.AddToBar(destinationChecker);
                 destinationTriangle.CheckersStack.Push(sourceChecker);
                 destinationTriangle.Type = CheckerType.Black;
             }
@@ -189,18 +189,18 @@ namespace BackgammonLib
         }
 
 
-        private bool MoveToOutsideBar(Backgammon game, int triangle, int move)
+        private bool MoveToOutsideBar(int triangle, int move)
         {
-            if (!CanMoveToOutsideBar(game, triangle, move))
+            if (!CanMoveToOutsideBar(triangle, move))
             {
                 return false;
             }
-            var sourceTriangle = game._board.Triangles[triangle - 1];
+            var sourceTriangle = Board.Triangles[triangle - 1];
             var sourceChecker = sourceTriangle.CheckersStack.Pop();
             sourceChecker.CheckerTriangle = -2; // -2 = outside
             sourceChecker.IsFinished = true;
             sourceChecker.IsAlive = false;
-            _outSideCheckersBar.AddToBar(game, sourceChecker);
+            OutSideCheckersBar.AddToBar(Game, sourceChecker);
             --sourceTriangle.CheckersCount;
             if (sourceTriangle.CheckersCount != 0) return true;
             sourceTriangle.Type = CheckerType.None;
@@ -209,7 +209,7 @@ namespace BackgammonLib
             return true;
         }
 
-        private bool CanMoveToOutsideBar(Backgammon game, int triangle, int move)
+        private bool CanMoveToOutsideBar(int triangle, int move)
         {
             if (move > 6 || move < 1)
             {
@@ -219,41 +219,41 @@ namespace BackgammonLib
             {
                 return false;
             }
-            if (game._board.Triangles[triangle - 1].Type != CheckerType.Black)
+            if (Board.Triangles[triangle - 1].Type != CheckerType.Black)
             {
                 return false;
             }
             if (triangle < move)
             {
-                if (!AllCheckersInLocalArea(game, triangle, 24 - triangle))
+                if (!AllCheckersInLocalArea(triangle, 24 - triangle))
                 {
                     return false;
                 }
             }
             else
             {
-                if (!AllCheckersInLocalArea(game, 6, 24))
+                if (!AllCheckersInLocalArea(6, 24))
                 {
                     return false;
                 }
             }
 
-            UpdateTurn(game);
+            UpdateTurn();
 
-            UpdateDice(game, move);
+            UpdateDice(move);
             return true;
         }
 
-        private bool AllCheckersInLocalArea(Backgammon game, int start, int end)
+        private bool AllCheckersInLocalArea(int start, int end)
         {
-            if (_deadCheckersBar.Bar.Count > 0)
+            if (DeadCheckersBar.Bar.Count > 0)
             {
                 return false;
             }
             var allCheckersInLocalArea = 1;
             Parallel.For(start, end, (i) =>
             {
-                if (game._board.Triangles[i].Type == CheckerType.Black)
+                if (Board.Triangles[i].Type == CheckerType.Black)
                 {
                     Interlocked.Exchange(ref allCheckersInLocalArea, 0);
                 }
@@ -262,15 +262,15 @@ namespace BackgammonLib
         }
 
 
-        internal override bool MoveFromDeadBar(Backgammon game, int move)
+        internal override bool MoveFromDeadBar(int move)
         {
-            if (!CanMoveFromDeadBar(game, move))
+            if (!CanMoveFromDeadBar(move))
             {
                 return false;
             }
 
-            var destinationTriangle = game._board.Triangles[move - 1];
-            var sourceChecker = _deadCheckersBar.RemoveFromBar();
+            var destinationTriangle = Board.Triangles[move - 1];
+            var sourceChecker = DeadCheckersBar.RemoveFromBar();
             sourceChecker.IsAlive = true;
             sourceChecker.CheckerTriangle = move - 1;
 
@@ -280,10 +280,10 @@ namespace BackgammonLib
                 var destinationChecker = destinationTriangle.CheckersStack.Pop();
                 destinationChecker.CheckerTriangle = -1; // -1 = Dead
                 destinationChecker.IsAlive = false;
-                game._whitePlayer._deadCheckersBar.Bar.Push(destinationChecker);
+                Game.WhitePlayer.DeadCheckersBar.Bar.Push(destinationChecker);
                 destinationTriangle.CheckersStack.Push(sourceChecker);
                 destinationTriangle.Type = CheckerType.Black;
-                UpdateTurnIfPlayerCanNotPlay(game);
+                UpdateTurnIfPlayerCanNotPlay();
                 return true;
             }
 
@@ -296,24 +296,24 @@ namespace BackgammonLib
                 destinationTriangle.Type = CheckerType.Black;
             }
 
-            UpdateTurnIfPlayerCanNotPlay(game);
+            UpdateTurnIfPlayerCanNotPlay();
             return true;
         }
 
-        private void UpdateTurnIfPlayerCanNotPlay(Backgammon game)
+        private void UpdateTurnIfPlayerCanNotPlay()
         {
-            if (_deadCheckersBar.Bar.Count > 0)
+            if (DeadCheckersBar.Bar.Count > 0)
             {
-                if (game._dice.FirstCube != 0 && game._board.Triangles[24 - game._dice.FirstCube].Type == CheckerType.White)
+                if (Dice.FirstCube != 0 && Board.Triangles[24 - Dice.FirstCube].Type == CheckerType.White)
                 {
-                    if (game._dice.FirstCube != 0 && game._board.Triangles[24 - game._dice.FirstCube].CheckersCount > 1)
+                    if (Dice.FirstCube != 0 && Board.Triangles[24 - Dice.FirstCube].CheckersCount > 1)
                     {
-                        if (game._dice.SecondCube != 0 && game._board.Triangles[24 - game._dice.SecondCube].Type == CheckerType.White)
+                        if (Dice.SecondCube != 0 && Board.Triangles[24 - Dice.SecondCube].Type == CheckerType.White)
                         {
-                            if (game._dice.SecondCube != 0 && game._board.Triangles[24 - game._dice.SecondCube].CheckersCount > 1)
+                            if (Dice.SecondCube != 0 && Board.Triangles[24 - Dice.SecondCube].CheckersCount > 1)
                             {
-                                game.Turn = CheckerType.White;
-                                game._dice.ResetDice();
+                                Game.Turn = CheckerType.White;
+                                Dice.ResetDice();
                             }
                         }
                     }
@@ -321,52 +321,52 @@ namespace BackgammonLib
             }
             else
             {
-                UpdateTurn(game);
+                UpdateTurn();
             }
-            if (_deadCheckersBar.Bar.Count > 0 && game._dice.Steps > 0)
+            if (DeadCheckersBar.Bar.Count > 0 && Dice.Steps > 0)
             {
                 var canNotPlay = 0;
-                switch (game._dice.FirstCube)
+                switch (Dice.FirstCube)
                 {
                     case 0:
                         break;
                     default:
-                        if (game._board.Triangles[24 - game._dice.FirstCube].Type == CheckerType.White)
+                        if (Board.Triangles[24 - Dice.FirstCube].Type == CheckerType.White)
                         {
                             ++canNotPlay;
                         }
                         break;
                 }
-                switch (game._dice.SecondCube)
+                switch (Dice.SecondCube)
                 {
                     case 0:
                         break;
                     default:
-                        if (game._board.Triangles[24 - game._dice.SecondCube].Type == CheckerType.White)
+                        if (Board.Triangles[24 - Dice.SecondCube].Type == CheckerType.White)
                         {
                             ++canNotPlay;
                         }
                         break;
                 }
-                if (canNotPlay == 1 && (game._dice.FirstCube == 0 || game._dice.SecondCube == 0) || canNotPlay == 2)
+                if (canNotPlay == 1 && (Dice.FirstCube == 0 || Dice.SecondCube == 0) || canNotPlay == 2)
                 {
-                    game.Turn = CheckerType.White;
-                    game._dice.ResetDice();
+                    Game.Turn = CheckerType.White;
+                    Dice.ResetDice();
                 }
             }
         }
 
-        private bool CanMoveFromDeadBar(Backgammon game, int move)
+        private bool CanMoveFromDeadBar(int move)
         {
-            if (game._blackPlayer._deadCheckersBar.Bar.Count == 0)
+            if (DeadCheckersBar.Bar.Count == 0)
             {
                 return false;
             }
-            if (game.Turn != CheckerType.Black)
+            if (Game.Turn != CheckerType.Black)
             {
                 return false;
             }
-            if (!game.IsBlackPlayerCanPlay)
+            if (!Game.IsBlackPlayerCanPlay)
             {
                 return false;
             }
@@ -375,7 +375,7 @@ namespace BackgammonLib
                 return false;
             }
 
-            var destinationTriangle = game._board.Triangles[move - 1];
+            var destinationTriangle = Board.Triangles[move - 1];
 
             if (destinationTriangle.CheckersCount > 1 && destinationTriangle.Type == CheckerType.White)
             {
@@ -383,37 +383,37 @@ namespace BackgammonLib
             }
 
 
-            return UpdateDice(game, move, true);
+            return UpdateDice(move, true);
         }
 
-        private void UpdateTurn(Backgammon game)
+        private void UpdateTurn()
         {
-            if (AllCheckersInLocalArea(game, 6, 24))
+            if (AllCheckersInLocalArea(6, 24))
             {
                 return;
             }
             var canMove = false;
-            var firstCube = game._dice.FirstCube;
-            var secondCube = game._dice.SecondCube;
+            var firstCube = Dice.FirstCube;
+            var secondCube = Dice.SecondCube;
             Parallel.For(0, 24, (i) =>
             {
                 if (i - firstCube < 0 || i - secondCube < 0)
                 {
                 }
-                else if (game._board.Triangles[i - firstCube].Type == CheckerType.White &&
-                         game._board.Triangles[i - firstCube].CheckersCount == 1 ||
-                         game._board.Triangles[i - firstCube].Type == CheckerType.Black ||
-                         game._board.Triangles[i - firstCube].Type == CheckerType.None)
+                else if (Board.Triangles[i - firstCube].Type == CheckerType.White &&
+                         Board.Triangles[i - firstCube].CheckersCount == 1 ||
+                         Board.Triangles[i - firstCube].Type == CheckerType.Black ||
+                         Board.Triangles[i - firstCube].Type == CheckerType.None)
                 {
                     if (firstCube != 0)
                     {
                         canMove = true;
                     }
                 }
-                else if (game._board.Triangles[i - secondCube].Type == CheckerType.White &&
-                         game._board.Triangles[i - secondCube].CheckersCount == 1 ||
-                         game._board.Triangles[i - secondCube].Type == CheckerType.Black ||
-                         game._board.Triangles[i - secondCube].Type == CheckerType.None)
+                else if (Board.Triangles[i - secondCube].Type == CheckerType.White &&
+                         Board.Triangles[i - secondCube].CheckersCount == 1 ||
+                         Board.Triangles[i - secondCube].Type == CheckerType.Black ||
+                         Board.Triangles[i - secondCube].Type == CheckerType.None)
                 {
                     if (secondCube != 0)
                     {
@@ -424,8 +424,8 @@ namespace BackgammonLib
 
             if (!canMove)
             {
-                game.Turn = CheckerType.White;
-                game._dice.ResetDice();
+                Game.Turn = CheckerType.White;
+                Dice.ResetDice();
             }
         }
     }

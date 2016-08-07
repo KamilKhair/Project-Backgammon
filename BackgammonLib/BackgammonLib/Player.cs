@@ -1,33 +1,34 @@
-﻿using System.Collections.Generic;
-
-namespace BackgammonLib
+﻿namespace BackgammonLib
 {
     internal class Player
     {
-        internal Player(string name, CheckerType type)
+        internal Player(CheckerType type, GameBoard board, Dice dice, Backgammon game)
         {
-            PlayerName = name;
             Type = type;
+            Board = board;
+            Dice = dice;
+            Game = game;
         }
-
-        internal string PlayerName;
 
         internal CheckerType Type;
+        protected readonly GameBoard Board;
+        protected readonly Dice Dice;
+        protected readonly Backgammon Game;
 
-        internal DeadCheckersBar _deadCheckersBar;
-        internal OutSideCheckersBar _outSideCheckersBar;
+        internal DeadCheckersBar DeadCheckersBar;
+        internal OutSideCheckersBar OutSideCheckersBar;
 
-        internal virtual bool Roll(Backgammon game)
+        internal virtual bool Roll()
         {
             return true;
         }
 
-        internal virtual bool Move(Backgammon game, int triangle, int move)
+        internal virtual bool Move(int triangle, int move)
         {
             return true;
         }
 
-        internal virtual bool MoveFromDeadBar(Backgammon game, int move)
+        internal virtual bool MoveFromDeadBar(int move)
         {
             return true;
         }

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BackgammonLib
 {
     public class Dice
     {
+        internal Dice(Backgammon game)
+        {
+            _game = game;
+        }
+
         public CheckerType CurrentType;
 
         public int Steps { get; private set; }
@@ -19,7 +22,9 @@ namespace BackgammonLib
 
         private static readonly Random Rand = new Random();
 
-        internal bool RollDice(Backgammon game, CheckerType type)
+        private readonly Backgammon _game;
+
+        internal bool RollDice(CheckerType type)
         {
             if (Steps != 0) return false;
             FirstCube = Rand.Next(1, 7);
@@ -27,63 +32,67 @@ namespace BackgammonLib
             RolledDouble = FirstCube == SecondCube;
             Steps = RolledDouble ? 4 : 2;
             CurrentType = type;
-            UpdateTurn(game);
+            UpdateTurn();
             return true;
         }
 
-        private void UpdateTurn(Backgammon game)
+        private void UpdateTurn()
         {
-            if (game.Turn == CheckerType.Black)
+            if (_game.Turn == CheckerType.Black)
             {
-                if (game.BlackDeadCheckersBar.Any())
+                if (!_game.BlackDeadCheckersBar.Any())
                 {
-                    if (game._board.Triangles[23 - FirstCube + 1].CheckersCount > 1 && game._board.Triangles[23 - SecondCube + 1].CheckersCount > 1)
-                    {
-                        if (game._board.Triangles[23 - FirstCube + 1].Type == CheckerType.White &&
-                            game._board.Triangles[23 - SecondCube + 1].Type == CheckerType.White)
-                        {
-                            game.Turn = CheckerType.White;
-                            return;
-                        }
-                    }
+                    return;
+                }
+                if (_game.GameBoard.Triangles[23 - FirstCube + 1].CheckersCount <= 1 ||
+                    _game.GameBoard.Triangles[23 - SecondCube + 1].CheckersCount <= 1)
+                {
+                    return;
+                }
+                if (_game.GameBoard.Triangles[23 - FirstCube + 1].Type == CheckerType.White &&
+                    _game.GameBoard.Triangles[23 - SecondCube + 1].Type == CheckerType.White)
+                {
+                    _game.Turn = CheckerType.White;
                 }
             }
             else
             {
-                if (game.WhiteDeadCheckersBar.Any())
+                if (!_game.WhiteDeadCheckersBar.Any())
                 {
-                    if (game._board.Triangles[FirstCube - 1].CheckersCount > 1 && game._board.Triangles[SecondCube - 1].CheckersCount > 1)
-                    {
-                        if (game._board.Triangles[FirstCube - 1].Type == CheckerType.Black &&
-                            game._board.Triangles[SecondCube - 1].Type == CheckerType.Black)
-                        {
-                            game.Turn = CheckerType.Black;
-                            return;
-                        }
-                    }
+                    return;
+                }
+                if (_game.GameBoard.Triangles[FirstCube - 1].CheckersCount <= 1 ||
+                    _game.GameBoard.Triangles[SecondCube - 1].CheckersCount <= 1)
+                {
+                    return;
+                }
+                if (_game.GameBoard.Triangles[FirstCube - 1].Type == CheckerType.Black &&
+                    _game.GameBoard.Triangles[SecondCube - 1].Type == CheckerType.Black)
+                {
+                    _game.Turn = CheckerType.Black;
                 }
             }
         }
 
-        internal void DecrementSteps(Backgammon game)
+        internal void DecrementSteps()
         {
             if (Steps > 0)
             {
                 --Steps;
             }
             if (Steps != 0) return;
-            if (game.Turn == CheckerType.Black)
+            if (_game.Turn == CheckerType.Black)
             {
-                if (game.IsWhitePlayerCanPlay)
+                if (_game.IsWhitePlayerCanPlay)
                 {
-                    game.Turn = CheckerType.White;
+                    _game.Turn = CheckerType.White;
                 }
             }
             else
             {
-                if (game.IsBlackPlayerCanPlay)
+                if (_game.IsBlackPlayerCanPlay)
                 {
-                    game.Turn = CheckerType.Black;
+                    _game.Turn = CheckerType.Black;
                 }
             }
         }

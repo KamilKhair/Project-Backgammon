@@ -24,7 +24,7 @@
         internal bool IsFinished;
 
         public CheckerType CheckerType => Type;
-        public int CheckerID => CheckerId;
+        public int CheckerNumber => CheckerId;
         public int CheckerTraingle => CheckerTriangle;
     }
 }

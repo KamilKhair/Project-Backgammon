@@ -13,7 +13,7 @@ namespace BackgammonLib
             Bar.Push(checker);
             if (Bar.Count != 15) return;
             game.GameOver = true;
-            game._winner = CheckerType.Black;
+            game.Winner = CheckerType.Black;
             game.RaiseGameFinishedEvent();
         }
 

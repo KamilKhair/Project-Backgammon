@@ -4,28 +4,19 @@ namespace BackgammonLib
 {
     public class GameBoard
     {
-        internal GameBoard(Backgammon game)
+        internal GameBoard()
         {
-            _game = game;
+            Triangles = new List<Triangle>();
             InitializeBoard();
         }
-        internal List<Triangle> Triangles = new List<Triangle>();
-        internal WhiteDeadChechersBar DeadCheckersBarWhite;
-        internal WhiteOutSideCheckersBar OutSideCheckersBarrWhite;
-        internal BlackDeadCheckersBar DeadCheckersBarBlack;
-        internal BlackOutSideCheckersBar OutSideCheckersBarBlack;
 
-        private readonly Backgammon _game;
+        internal List<Triangle> Triangles;
         private const int NumOfPoints = 24;
 
         public IEnumerable<Triangle> AllTriangles => Triangles;
 
         private void InitializeBoard()
         {
-            DeadCheckersBarBlack = _game._blackPlayer._deadCheckersBar as BlackDeadCheckersBar;
-            DeadCheckersBarWhite = _game._whitePlayer._deadCheckersBar as WhiteDeadChechersBar;
-            OutSideCheckersBarBlack = _game._blackPlayer._outSideCheckersBar as BlackOutSideCheckersBar;
-            OutSideCheckersBarrWhite = _game._whitePlayer._outSideCheckersBar as WhiteOutSideCheckersBar;
             for (var i = 0; i < NumOfPoints; ++i)
             {
                 switch (i)

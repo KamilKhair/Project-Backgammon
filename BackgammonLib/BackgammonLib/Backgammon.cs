@@ -6,21 +6,23 @@ using System.Threading.Tasks;
 
 namespace BackgammonLib
 {
-    public delegate void GameFinishedEventHandler(object sender, EventArgs e);
     public class Backgammon
     {
         public Backgammon()
         {
-            _board = new GameBoard(this);
+            GameBoard = new GameBoard();
+            GameDice = new Dice(this);
+            Turn = CheckerType.Black;
+            Winner = CheckerType.None;
+            BlackPlayer = new BlackPlayer(CheckerType.Black, GameBoard, GameDice, this);
+            WhitePlayer = new WhitePlayer(CheckerType.Black, GameBoard, GameDice, this);
         }
 
-        internal readonly GameBoard _board;
-        internal readonly Dice _dice = new Dice();
-        internal readonly Player _blackPlayer = new BlackPlayer("Black Player", CheckerType.Black);
-        internal readonly Player _whitePlayer = new WhitePlayer("White Player", CheckerType.White);
+        internal readonly Dice GameDice;
+        internal readonly GameBoard GameBoard;
         internal bool GameOver = false;
-        internal CheckerType _winner = CheckerType.None;
-        internal CheckerType _turn = CheckerType.Black;
+        internal readonly Player BlackPlayer;
+        internal readonly Player WhitePlayer;
 
         public event GameFinishedEventHandler GameFinished;
 
@@ -34,25 +36,21 @@ namespace BackgammonLib
             OnGameFinished(EventArgs.Empty);
         }
 
-        public CheckerType Turn
-        {
-            get { return _turn; }
-            internal set { _turn = value; }
-        }
+        public CheckerType Turn { get; internal set; }
 
         public bool IsGameOver => GameOver;
 
-        public CheckerType Winner => _winner;
+        public CheckerType Winner { get; internal set; }
 
-        public Dice Dice => _dice;
+        public Dice Dice => GameDice;
 
-        public GameBoard Board => _board;
+        public GameBoard Board => GameBoard;
 
         public int BlackPlayerCheckers
         {
             get
             {
-                return _board.Triangles.SelectMany(p => p.CheckersStack).Count(ch => ch.Type == CheckerType.Black && !ch.IsFinished);
+                return GameBoard.Triangles.SelectMany(p => p.CheckersStack).Count(ch => ch.Type == CheckerType.Black && !ch.IsFinished);
             }
         }
 
@@ -63,7 +61,7 @@ namespace BackgammonLib
                 var count = 0;
                 Parallel.For(18, 24, (i) =>
                 {
-                    if (_board.Triangles[i].Type == CheckerType.White && _board.Triangles[i].CheckersCount > 1)
+                    if (GameBoard.Triangles[i].Type == CheckerType.White && GameBoard.Triangles[i].CheckersCount > 1)
                     {
                         Interlocked.Increment(ref count);
                     }
@@ -76,7 +74,7 @@ namespace BackgammonLib
         {
             get
             {
-                return _board.Triangles.SelectMany(p => p.CheckersStack).Count(ch => ch.Type == CheckerType.White && !ch.IsFinished);
+                return GameBoard.Triangles.SelectMany(p => p.CheckersStack).Count(ch => ch.Type == CheckerType.White && !ch.IsFinished);
             }
         }
 
@@ -87,7 +85,7 @@ namespace BackgammonLib
                 var count = 0;
                 Parallel.For(0, 6, (i) =>
                 {
-                    if (_board.Triangles[i].Type == CheckerType.Black && _board.Triangles[i].CheckersCount > 1)
+                    if (GameBoard.Triangles[i].Type == CheckerType.Black && GameBoard.Triangles[i].CheckersCount > 1)
                     {
                         Interlocked.Increment(ref count);
                     }
@@ -96,39 +94,39 @@ namespace BackgammonLib
             }
         }
 
-        public IEnumerable<Checker> BlackDeadCheckersBar => _board.DeadCheckersBarBlack.Bar;
-        public IEnumerable<Checker> WhiteDeadCheckersBar => _board.DeadCheckersBarWhite.Bar;
-        public IEnumerable<Checker> BlackOutSideCheckersBar => _board.OutSideCheckersBarBlack.Bar;
-        public IEnumerable<Checker> WhiteOutSideCheckersBar => _board.OutSideCheckersBarrWhite.Bar;
+        public IEnumerable<Checker> BlackDeadCheckersBar => BlackPlayer.DeadCheckersBar.Bar;
+        public IEnumerable<Checker> WhiteDeadCheckersBar => WhitePlayer.DeadCheckersBar.Bar;
+        public IEnumerable<Checker> BlackOutSideCheckersBar => BlackPlayer.OutSideCheckersBar.Bar;
+        public IEnumerable<Checker> WhiteOutSideCheckersBar => WhitePlayer.OutSideCheckersBar.Bar;
 
         public bool BlackPlayerRoll()
         {
-            return _turn == CheckerType.Black && _blackPlayer.Roll(this);
+            return Turn == CheckerType.Black && BlackPlayer.Roll();
         }
 
         public bool WhitePlayerRoll()
         {
-            return _turn == CheckerType.White && _blackPlayer.Roll(this);
+            return Turn == CheckerType.White && BlackPlayer.Roll();
         }
 
         public bool MoveBlack(int triangle, int move)
         {
-            return Turn == CheckerType.Black && _blackPlayer.Move(this, triangle, move);
+            return Turn == CheckerType.Black && BlackPlayer.Move(triangle, move);
         }
 
         public bool MoveBlackFromDeadBar(int move)
         {
-            return Turn == CheckerType.Black && _blackPlayer.MoveFromDeadBar(this, move);
+            return Turn == CheckerType.Black && BlackPlayer.MoveFromDeadBar(move);
         }
 
         public bool MoveWhite(int triangle, int move)
         {
-            return Turn == CheckerType.White && _whitePlayer.Move(this, triangle, move);
+            return Turn == CheckerType.White && WhitePlayer.Move(triangle, move);
         }
 
         public bool MoveWhiteFromDeadBar(int move)
         {
-            return Turn == CheckerType.White && _whitePlayer.MoveFromDeadBar(this, move);
+            return Turn == CheckerType.White && WhitePlayer.MoveFromDeadBar(move);
         }
     }
 }
