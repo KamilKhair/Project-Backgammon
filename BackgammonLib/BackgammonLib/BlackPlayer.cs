@@ -5,7 +5,7 @@ namespace BackgammonLib
 {
     internal class BlackPlayer : Player
     {
-        internal BlackPlayer(CheckerType t, GameBoard board, Dice dice, Backgammon game) : base(t, board, dice, game)
+        internal BlackPlayer(CheckerType t, Backgammon game) : base(t, game)
         {
             DeadCheckersBar = new BlackDeadCheckersBar();
             OutSideCheckersBar = new BlackOutSideCheckersBar();

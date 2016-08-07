@@ -14,8 +14,8 @@ namespace BackgammonLib
             GameDice = new Dice(this);
             Turn = CheckerType.Black;
             Winner = CheckerType.None;
-            BlackPlayer = new BlackPlayer(CheckerType.Black, GameBoard, GameDice, this);
-            WhitePlayer = new WhitePlayer(CheckerType.Black, GameBoard, GameDice, this);
+            BlackPlayer = new BlackPlayer(CheckerType.Black, this);
+            WhitePlayer = new WhitePlayer(CheckerType.Black, this);
         }
 
         internal readonly Dice GameDice;

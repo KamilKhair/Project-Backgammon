@@ -2,11 +2,11 @@
 {
     internal class Player
     {
-        internal Player(CheckerType type, GameBoard board, Dice dice, Backgammon game)
+        internal Player(CheckerType type, Backgammon game)
         {
             Type = type;
-            Board = board;
-            Dice = dice;
+            Board = game.Board;
+            Dice = game.Dice;
             Game = game;
         }
 
@@ -29,6 +29,11 @@
         }
 
         internal virtual bool MoveFromDeadBar(int move)
+        {
+            return true;
+        }
+
+        internal virtual bool CheckIfThereAreAvailableMoves()
         {
             return true;
         }

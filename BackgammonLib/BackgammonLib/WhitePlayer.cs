@@ -7,7 +7,7 @@ namespace BackgammonLib
     internal class WhitePlayer : Player
     {
         
-        public WhitePlayer(CheckerType t, GameBoard board, Dice dice, Backgammon game) : base(t, board, dice, game)
+        public WhitePlayer(CheckerType t, Backgammon game) : base(t, game)
         {
             DeadCheckersBar = new WhiteDeadChechersBar();
             OutSideCheckersBar = new WhiteOutSideCheckersBar();
