@@ -25,15 +25,26 @@ namespace BackgammonLib
         internal readonly Player WhitePlayer;
 
         public event GameFinishedEventHandler GameFinished;
+        public event NoAvailableMovesEventHandler NoAvailableMoves;
 
         protected virtual void OnGameFinished(EventArgs e)
         {
             GameFinished?.Invoke(this, e);
         }
 
+        protected virtual void WhwnNoAvailableMoves(EventArgs e)
+        {
+            NoAvailableMoves?.Invoke(this, e);
+        }
+
         internal void RaiseGameFinishedEvent()
         {
             OnGameFinished(EventArgs.Empty);
+        }
+
+        internal void RaiseNoAvailableMovesEvent()
+        {
+            WhwnNoAvailableMoves(EventArgs.Empty);
         }
 
         public CheckerType Turn { get; internal set; }

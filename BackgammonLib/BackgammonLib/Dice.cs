@@ -40,36 +40,20 @@ namespace BackgammonLib
         {
             if (_game.Turn == CheckerType.Black)
             {
-                if (!_game.BlackDeadCheckersBar.Any())
-                {
-                    return;
-                }
-                if (_game.GameBoard.Triangles[23 - FirstCube + 1].CheckersCount <= 1 ||
-                    _game.GameBoard.Triangles[23 - SecondCube + 1].CheckersCount <= 1)
-                {
-                    return;
-                }
-                if (_game.GameBoard.Triangles[23 - FirstCube + 1].Type == CheckerType.White &&
-                    _game.GameBoard.Triangles[23 - SecondCube + 1].Type == CheckerType.White)
+                if (!_game.BlackPlayer.CheckIfThereAreAvailableMoves())
                 {
                     _game.Turn = CheckerType.White;
+                    _game.RaiseNoAvailableMovesEvent();
+                    ResetDice();
                 }
             }
             else
             {
-                if (!_game.WhiteDeadCheckersBar.Any())
-                {
-                    return;
-                }
-                if (_game.GameBoard.Triangles[FirstCube - 1].CheckersCount <= 1 ||
-                    _game.GameBoard.Triangles[SecondCube - 1].CheckersCount <= 1)
-                {
-                    return;
-                }
-                if (_game.GameBoard.Triangles[FirstCube - 1].Type == CheckerType.Black &&
-                    _game.GameBoard.Triangles[SecondCube - 1].Type == CheckerType.Black)
+                if (!_game.WhitePlayer.CheckIfThereAreAvailableMoves())
                 {
                     _game.Turn = CheckerType.Black;
+                    _game.RaiseNoAvailableMovesEvent();
+                    ResetDice();
                 }
             }
         }

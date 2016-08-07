@@ -24,6 +24,7 @@ namespace BackgammonWinFormsApp
             _turnLabel.Text = Resources.BackgammonForm_BackgammonForm_Turn__Black;
             _firstClick = true;
             _game.GameFinished += GameFinishedListener;
+            _game.NoAvailableMoves += NoAvailableMovesListener;
         }
 
         private void DrawBoard()
@@ -440,6 +441,11 @@ namespace BackgammonWinFormsApp
             {
                 Application.Exit();
             }
+        }
+
+        private void NoAvailableMovesListener(object sender, EventArgs e)
+        {
+            MessageBox.Show(@"No Available Moves !");
         }
     }
 }
