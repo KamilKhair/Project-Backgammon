@@ -280,6 +280,7 @@ namespace BackgammonLib
                 game._blackPlayer._deadCheckersBar.Bar.Push(destinationChecker);
                 destinationTriangle.CheckersStack.Push(sourceChecker);
                 destinationTriangle.Type = CheckerType.White;
+                UpdateTurnIfPlayerCanNotPlay(game);
                 return true;
             }
 
@@ -318,35 +319,36 @@ namespace BackgammonLib
             else
             {
                 UpdateTurn(game);
-                if (_deadCheckersBar.Bar.Count > 1 && game._dice.Steps > 0)
+            }
+            if (_deadCheckersBar.Bar.Count > 0 && game._dice.Steps > 0)
+            {
+                var canNotPlay = 0;
+                switch (game._dice.FirstCube)
                 {
-                    var canNotPlay = 0;
-                    switch (game._dice.FirstCube)
-                    {
-                        case 0:
-                            break;
-                        default:
-                            if (game._board.Triangles[game._dice.FirstCube - 1].Type == CheckerType.Black)
-                            {
-                                ++canNotPlay;
-                            }
-                            break;
-                    }
-                    switch (game._dice.SecondCube)
-                    {
-                        case 0:
-                            break;
-                        default:
-                            if (game._board.Triangles[game._dice.SecondCube - 1].Type == CheckerType.Black)
-                            {
-                                ++canNotPlay;
-                            }
-                            break;
-                    }
-                    if (canNotPlay == 1 && (game._dice.FirstCube == 0 || game._dice.SecondCube == 0) || canNotPlay == 2)
-                    {
-                        game.Turn = CheckerType.Black;
-                    }
+                    case 0:
+                        break;
+                    default:
+                        if (game._board.Triangles[game._dice.FirstCube - 1].Type == CheckerType.Black)
+                        {
+                            ++canNotPlay;
+                        }
+                        break;
+                }
+                switch (game._dice.SecondCube)
+                {
+                    case 0:
+                        break;
+                    default:
+                        if (game._board.Triangles[game._dice.SecondCube - 1].Type == CheckerType.Black)
+                        {
+                            ++canNotPlay;
+                        }
+                        break;
+                }
+                if (canNotPlay == 1 && (game._dice.FirstCube == 0 || game._dice.SecondCube == 0) || canNotPlay == 2)
+                {
+                    game.Turn = CheckerType.Black;
+                    game._dice.ResetDice();
                 }
             }
         }
