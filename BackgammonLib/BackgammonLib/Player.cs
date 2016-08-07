@@ -38,5 +38,14 @@
             return true;
         }
 
+        internal virtual bool CheckIfCanMove(int triangle, int move)
+        {
+            return true;
+        }
+
+        internal virtual bool CheckIfCanMoveFromDeadBar(int triangle)
+        {
+            return true;
+        }
     }
 }

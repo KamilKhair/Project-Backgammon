@@ -252,9 +252,9 @@ namespace BackgammonWinFormsApp
                             return;
                         }
                     }
-                    else if (index != 0 &&
-                             _game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.White ||
-                             _game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.None)
+                    else if (index != 0 && index != 26 && index != 27 &&
+                             (_game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.White ||
+                             _game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.None))
                     {
                         return;
                     }
@@ -272,9 +272,9 @@ namespace BackgammonWinFormsApp
                             return;
                         }
                     }
-                    else if (index != 25 &&
-                             _game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.Black ||
-                             _game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.None)
+                    else if (index != 25 && index != 26 && index != 27 &&
+                             (_game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.Black ||
+                             _game.Board.AllTriangles.ElementAt(index - 1).TriangleType == CheckerType.None))
                     {
                         return;
                     }
@@ -289,14 +289,14 @@ namespace BackgammonWinFormsApp
                         var pen = new Pen(Color.Red, 5);
                         graphics?.DrawRectangle(pen, 0, 0, 42, 223);
                     }
-                    else
+                    else if (index != 26 && index != 27 && index != 0)
                     {
                         var pen = new Pen(Color.Red, 5);
                         graphics?.DrawRectangle(pen, 0, 0, 50, 223);
                     }
                     var firstchoice = index - _game.Dice.FirstCube;
                     int secondChoice = index - _game.Dice.SecondCube;
-                    if (firstchoice >= 1 && _game.Dice.FirstCube > 0 &&
+                    if (firstchoice >= 1 && _game.Dice.FirstCube > 0 && firstchoice <= 24 &&
                         (_game.Board.AllTriangles.ElementAt(firstchoice - 1).TriangleType == CheckerType.Black ||
                         _game.Board.AllTriangles.ElementAt(firstchoice - 1).TriangleType == CheckerType.None ||
                         (_game.Board.AllTriangles.ElementAt(firstchoice - 1).TriangleType == CheckerType.White &&
@@ -306,7 +306,7 @@ namespace BackgammonWinFormsApp
                         var pen2 = new Pen(Color.Green, 5);
                         graphics2.DrawRectangle(pen2, 0, 0, 50, 223);
                     }
-                    if (secondChoice >= 1 && _game.Dice.SecondCube > 0 &&
+                    if (secondChoice >= 1 && _game.Dice.SecondCube > 0 && secondChoice <= 24 &&
                         (_game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.Black ||
                         _game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.None ||
                         (_game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.White &&
@@ -357,19 +357,19 @@ namespace BackgammonWinFormsApp
             {
                 if (_firstClick)
                 {
-                    if (index == 26)
+                    if (index == 0)
                     {
                         var pen = new Pen(Color.Red, 5);
                         graphics?.DrawRectangle(pen, 0, 0, 42, 223);
                     }
-                    else
+                    else if(index != 26 && index != 27 && index != 25)
                     {
                         var pen = new Pen(Color.Red, 5);
                         graphics?.DrawRectangle(pen, 0, 0, 50, 223);
                     }
                     var firstchoice = index + _game.Dice.FirstCube;
                     int secondChoice = index + _game.Dice.SecondCube;
-                    if (firstchoice <= 24 && _game.Dice.FirstCube > 0 &&
+                    if (firstchoice <= 24 && _game.Dice.FirstCube > 0 && firstchoice >= 1 &&
                         (_game.Board.AllTriangles.ElementAt(firstchoice - 1).TriangleType == CheckerType.White ||
                         _game.Board.AllTriangles.ElementAt(firstchoice - 1).TriangleType == CheckerType.None ||
                         (_game.Board.AllTriangles.ElementAt(firstchoice - 1).TriangleType == CheckerType.Black &&
@@ -379,7 +379,7 @@ namespace BackgammonWinFormsApp
                         var pen2 = new Pen(Color.Green, 5);
                         graphics2.DrawRectangle(pen2, 0, 0, 50, 223);
                     }
-                    if (secondChoice <= 24 && _game.Dice.SecondCube > 0 &&
+                    if (secondChoice <= 24 && _game.Dice.SecondCube > 0 && secondChoice >= 1 &&
                         (_game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.White ||
                         _game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.None ||
                         (_game.Board.AllTriangles.ElementAt(secondChoice - 1).TriangleType == CheckerType.Black &&

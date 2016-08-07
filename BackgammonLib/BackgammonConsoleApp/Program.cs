@@ -15,7 +15,7 @@ namespace BackgammonConsoleApp
                 Console.Clear();
                 DisplayOnConsole(game);
                 Console.WriteLine($"Turn: {game.Turn} Player!");
-                if (Dice.Steps == 0)
+                if (game.Dice.Steps == 0)
                 {
                     if (game.Turn == CheckerType.Black)
                     {
@@ -32,40 +32,40 @@ namespace BackgammonConsoleApp
                     var move = 0;
                     if (game.BlackDeadCheckersBar.Any() && game.Turn == CheckerType.Black)
                     {
-                        Console.WriteLine($"You rolled: ({Dice.FirstCube}, {Dice.SecondCube})");
+                        Console.WriteLine($"You rolled: ({game.Dice.FirstCube}, {game.Dice.SecondCube})");
                         Console.WriteLine("Please Enter triangle to move into:");
                         while (!int.TryParse(Console.ReadLine(), out triangle))
                         {
                             Console.Clear();
                             DisplayOnConsole(game);
                             Console.WriteLine($"Turn: {game.Turn} Player!");
-                            Console.WriteLine($"You rolled: ({Dice.FirstCube}, {Dice.SecondCube})");
+                            Console.WriteLine($"You rolled: ({game.Dice.FirstCube}, {game.Dice.SecondCube})");
                             Console.WriteLine("Please Enter triangle to move from:");
                         }
                     }
                     else if (game.WhiteDeadCheckersBar.Any() && game.Turn == CheckerType.White)
                     {
-                        Console.WriteLine($"You rolled: ({Dice.FirstCube}, {Dice.SecondCube})");
+                        Console.WriteLine($"You rolled: ({game.Dice.FirstCube}, {game.Dice.SecondCube})");
                         Console.WriteLine("Please Enter triangle to move into:");
                         while (!int.TryParse(Console.ReadLine(), out triangle))
                         {
                             Console.Clear();
                             DisplayOnConsole(game);
                             Console.WriteLine($"Turn: {game.Turn} Player!");
-                            Console.WriteLine($"You rolled: ({Dice.FirstCube}, {Dice.SecondCube})");
+                            Console.WriteLine($"You rolled: ({game.Dice.FirstCube}, {game.Dice.SecondCube})");
                             Console.WriteLine("Please Enter triangle to move from:");
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"You rolled: ({Dice.FirstCube}, {Dice.SecondCube})");
+                        Console.WriteLine($"You rolled: ({game.Dice.FirstCube}, {game.Dice.SecondCube})");
                         Console.WriteLine("Please Enter triangle to move from:");
                         while (!int.TryParse(Console.ReadLine(), out triangle))
                         {
                             Console.Clear();
                             DisplayOnConsole(game);
                             Console.WriteLine($"Turn: {game.Turn} Player!");
-                            Console.WriteLine($"You rolled: ({Dice.FirstCube}, {Dice.SecondCube})");
+                            Console.WriteLine($"You rolled: ({game.Dice.FirstCube}, {game.Dice.SecondCube})");
                             Console.WriteLine("Please Enter triangle to move from:");
                         }
                         Console.WriteLine("Please Enter how many triangles to move (According to your Cubes!):");
@@ -74,7 +74,7 @@ namespace BackgammonConsoleApp
                             Console.Clear();
                             DisplayOnConsole(game);
                             Console.WriteLine($"Turn: {game.Turn} Player!");
-                            Console.WriteLine($"You rolled: ({Dice.FirstCube}, {Dice.SecondCube})");
+                            Console.WriteLine($"You rolled: ({game.Dice.FirstCube}, {game.Dice.SecondCube})");
                             Console.WriteLine("Please Enter triangle to move from:");
                             Console.WriteLine(triangle);
                             Console.WriteLine("Please Enter how many triangles to move (According to your Cubes!):");
