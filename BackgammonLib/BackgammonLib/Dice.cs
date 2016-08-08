@@ -67,14 +67,14 @@ namespace BackgammonLib
             if (Steps != 0) return;
             if (_game.Turn == CheckerType.Black)
             {
-                if (_game.IsWhitePlayerCanPlay)
+                if (_game.WhitePlayer.IsWhitePlayerCanPlay)
                 {
                     _game.Turn = CheckerType.White;
                 }
             }
             else
             {
-                if (_game.IsBlackPlayerCanPlay)
+                if (_game.BlackPlayer.IsBlackPlayerCanPlay)
                 {
                     _game.Turn = CheckerType.Black;
                 }

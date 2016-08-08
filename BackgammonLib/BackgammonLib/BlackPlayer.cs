@@ -423,5 +423,21 @@ namespace BackgammonLib
             return allCheckersInLocalArea == 1;
         }
 
+        internal override bool IsBlackPlayerCanPlay
+        {
+            get
+            {
+                var count = 0;
+                Parallel.For(18, 24, (i) =>
+                {
+                    if (Board.Triangles[i].Type == CheckerType.White && Board.Triangles[i].CheckersCount > 1)
+                    {
+                        Interlocked.Increment(ref count);
+                    }
+                });
+                return count != 6;
+            }
+        }
+
     }
 }

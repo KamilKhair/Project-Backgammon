@@ -1,4 +1,7 @@
-﻿namespace BackgammonLib
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace BackgammonLib
 {
     internal class Player
     {
@@ -17,6 +20,8 @@
 
         internal DeadCheckersBar DeadCheckersBar;
         internal OutSideCheckersBar OutSideCheckersBar;
+        internal virtual bool IsWhitePlayerCanPlay { get; set; }
+        internal virtual bool IsBlackPlayerCanPlay { get; set; }
 
         internal virtual bool Roll()
         {

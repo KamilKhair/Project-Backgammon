@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BackgammonLib
 {
@@ -32,7 +30,7 @@ namespace BackgammonLib
             GameFinished?.Invoke(this, e);
         }
 
-        protected virtual void WhenNoAvailableMoves(NoAvailableMovesEventArgs e)
+        protected virtual void WhwnNoAvailableMoves(NoAvailableMovesEventArgs e)
         {
             NoAvailableMoves?.Invoke(this, e);
         }
@@ -44,7 +42,7 @@ namespace BackgammonLib
 
         internal void RaiseNoAvailableMovesEvent(int firstCube, int secondCube)
         {
-            WhenNoAvailableMoves(new NoAvailableMovesEventArgs(firstCube, secondCube));
+            WhwnNoAvailableMoves(new NoAvailableMovesEventArgs(firstCube, secondCube));
         }
 
         public CheckerType Turn { get; internal set; }
@@ -65,43 +63,11 @@ namespace BackgammonLib
             }
         }
 
-        public bool IsBlackPlayerCanPlay
-        {
-            get
-            {
-                var count = 0;
-                Parallel.For(18, 24, (i) =>
-                {
-                    if (GameBoard.Triangles[i].Type == CheckerType.White && GameBoard.Triangles[i].CheckersCount > 1)
-                    {
-                        Interlocked.Increment(ref count);
-                    }
-                });
-                return count != 6;
-            }
-        }
-
         public int WhitePlayerCheckers
         {
             get
             {
                 return GameBoard.Triangles.SelectMany(p => p.CheckersStack).Count(ch => ch.Type == CheckerType.White && !ch.IsFinished);
-            }
-        }
-
-        public bool IsWhitePlayerCanPlay
-        {
-            get
-            {
-                var count = 0;
-                Parallel.For(0, 6, (i) =>
-                {
-                    if (GameBoard.Triangles[i].Type == CheckerType.Black && GameBoard.Triangles[i].CheckersCount > 1)
-                    {
-                        Interlocked.Increment(ref count);
-                    }
-                });
-                return count != 6;
             }
         }
 
