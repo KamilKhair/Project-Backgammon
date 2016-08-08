@@ -247,51 +247,70 @@ namespace BackgammonWinFormsApp
             var graphics = triangle?.CreateGraphics();
             var name = triangle?.Name;
             var index = GetIndexOfTheCurrentClickedOnPtictureBox(name);
+            if (FirstClickIsIllegal(index))
+            {
+                return;
+            }
+            if (_game.Turn == CheckerType.Black)
+            {
+                DrawBlackBoundingRectangleOrPerformBlackMove(index, graphics);
+            }
+            else
+            {
+                DrawWhiteBoundingRectangleOrPerformWhiteMove(index, graphics);
+            }
+        }
+
+        private void DrawWhiteBoundingRectangleOrPerformWhiteMove(int index, Graphics graphics)
+        {
+            if (_firstClick)
+            {
+                DrawWhiteBoundingRectangleAndAvailavleMoves(index, graphics);
+            }
+            else
+            {
+                PerformWhiteMove(index);
+                ClearBoard();
+                DrawBoard();
+                _firstClick = true;
+            }
+        }
+
+        private void DrawBlackBoundingRectangleOrPerformBlackMove(int index, Graphics graphics)
+        {
+            if (_firstClick)
+            {
+                DrawBlackBoundingRectangleAndAvailavleMoves(index, graphics);
+            }
+            else
+            {
+                PerformBlackMove(index);
+                ClearBoard();
+                DrawBoard();
+                _firstClick = true;
+            }
+        }
+
+        private bool FirstClickIsIllegal(int index)
+        {
             if (_firstClick)
             {
                 if (_game.Turn == CheckerType.Black)
                 {
                     if (DrawingBoundingTriangleOnBlackTriangleIsIllegal(index))
                     {
-                        return;
+                        return true;
                     }
                 }
                 else
                 {
                     if (DrawingBoundingTriangleOnWhiteTriangleIsIllegal(index))
                     {
-                        return;
+                        return true;
                     }
                 }
             }
-            if (_game.Turn == CheckerType.Black)
-            {
-                if (_firstClick)
-                {
-                    DrawBlackBoundingRectangleAndAvailavleMoves(index, graphics);
-                }
-                else
-                {
-                    PerformBlackMove(index);
-                    ClearBoard();
-                    DrawBoard();
-                    _firstClick = true;
-                }
-            }
-            else
-            {
-                if (_firstClick)
-                {
-                    DrawWhiteBoundingRectangleAndAvailavleMoves(index, graphics);
-                }
-                else
-                {
-                    PerformWhiteMove(index);
-                    ClearBoard();
-                    DrawBoard();
-                    _firstClick = true;
-                }
-            }
+            return false;
         }
 
         private void PerformWhiteMove(int index)
