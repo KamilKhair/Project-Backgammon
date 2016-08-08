@@ -13,23 +13,15 @@ namespace BackgammonLib
 
         internal override bool Move(int triangle, int move)
         {
-            if (!CheckIfThereAreAvailableMoves())
-            {
-                return false;
-            }
-            if (!CheckIfCanMove(triangle, move))
-            {
-                return false;
-            }
-            if (triangle <= move)
-            {
-                MoveToOutsideBar(triangle, move);
-            }
-            else
-            {
-                PerformMove(triangle, move);
-            }
+            if (!CanPerformMove(triangle, move)) return false;
+            PerformTheCorrectMove(triangle, move);
             UpdateDice(move);
+            CheckIfNoMoreAvailableMoves();
+            return true;
+        }
+
+        private void CheckIfNoMoreAvailableMoves()
+        {
             if (!CheckIfThereAreAvailableMoves())
             {
                 if (Dice.Steps > 0)
@@ -37,7 +29,31 @@ namespace BackgammonLib
                     Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
                 }
                 Game.Turn = CheckerType.White;
-                Dice.ResetSecondCube();
+                Dice.ResetDice();
+            }
+        }
+
+        private void PerformTheCorrectMove(int triangle, int move)
+        {
+            if (triangle <= move)
+            {
+                MoveToOutsideBar(triangle);
+            }
+            else
+            {
+                PerformMove(triangle, move);
+            }
+        }
+
+        private bool CanPerformMove(int triangle, int move)
+        {
+            if (!CheckIfThereAreAvailableMoves())
+            {
+                return false;
+            }
+            if (!CheckIfCanMove(triangle, move))
+            {
+                return false;
             }
             return true;
         }
@@ -51,36 +67,46 @@ namespace BackgammonLib
             //Option 1: Moving to a triangle which has only one white checker.
             if (destinationTriangle.Type == CheckerType.White && destinationTriangle.CheckersCount == 1)
             {
-                var destinationChecker = destinationTriangle.CheckersStack.Pop();
-                destinationChecker.CheckerTriangle = -1; // -1 = Dead;
-                destinationChecker.IsAlive = false;
-                Game.WhitePlayer.DeadCheckersBar.AddToBar(destinationChecker);
-                destinationTriangle.CheckersStack.Push(sourceChecker);
-                destinationTriangle.Type = CheckerType.Black;
+                KillTheWhiteChecker(destinationTriangle, sourceChecker);
             }
             //Option 2: Moving to an empty triangle or a triangle which has at least one black checker.
             else if (destinationTriangle.Type == CheckerType.Black || destinationTriangle.Type == CheckerType.None)
             {
-                ++destinationTriangle.CheckersCount;
-                destinationTriangle.CheckersStack.Push(sourceChecker);
-                if (destinationTriangle.IsEmpty)
-                {
-                    destinationTriangle.IsEmpty = false;
-                    destinationTriangle.Type = CheckerType.Black;
-                }
-                if (sourceTriangle.CheckersCount == 0)
-                {
-                    sourceTriangle.Type = CheckerType.None;
-                    sourceTriangle.IsEmpty = true;
-                }
+                MoveToBlackOrEmptyTriangle(destinationTriangle, sourceChecker);
             }
             sourceChecker.CheckerTriangle -= move;
             --sourceTriangle.CheckersCount;
+            TryResetSourceTriangle(sourceTriangle);
+        }
+
+        private static void TryResetSourceTriangle(Triangle sourceTriangle)
+        {
             if (sourceTriangle.CheckersCount == 0)
             {
                 sourceTriangle.Type = CheckerType.None;
                 sourceTriangle.IsEmpty = true;
             }
+        }
+
+        private static void MoveToBlackOrEmptyTriangle(Triangle destinationTriangle, Checker sourceChecker)
+        {
+            ++destinationTriangle.CheckersCount;
+            destinationTriangle.CheckersStack.Push(sourceChecker);
+            if (destinationTriangle.IsEmpty)
+            {
+                destinationTriangle.IsEmpty = false;
+                destinationTriangle.Type = CheckerType.Black;
+            }
+        }
+
+        private void KillTheWhiteChecker(Triangle destinationTriangle, Checker sourceChecker)
+        {
+            var destinationChecker = destinationTriangle.CheckersStack.Pop();
+            destinationChecker.CheckerTriangle = -1; // -1 = Dead;
+            destinationChecker.IsAlive = false;
+            Game.WhitePlayer.DeadCheckersBar.AddToBar(destinationChecker);
+            destinationTriangle.CheckersStack.Push(sourceChecker);
+            destinationTriangle.Type = CheckerType.Black;
         }
 
         internal override bool MoveFromDeadBar(int triangle)
@@ -101,48 +127,20 @@ namespace BackgammonLib
             //Option 1: Moving to a triangle which has only one white checker.
             if (destinationTriangle.CheckersCount == 1 && destinationTriangle.Type == CheckerType.White)
             {
-                var destinationChecker = destinationTriangle.CheckersStack.Pop();
-                destinationChecker.CheckerTriangle = -1; // -1 = Dead
-                destinationChecker.IsAlive = false;
-                Game.WhitePlayer.DeadCheckersBar.Bar.Push(destinationChecker);
-                destinationTriangle.CheckersStack.Push(sourceChecker);
-                destinationTriangle.Type = CheckerType.Black;
+                KillTheWhiteChecker(destinationTriangle, sourceChecker);
                 UpdateDiceAfterMoveFromDeadBar(triangle);
-                if (!CheckIfThereAreAvailableMoves())
-                {
-                    if (Dice.Steps > 0)
-                    {
-                        Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
-                    }
-                    Game.Turn = CheckerType.White;
-                    Dice.ResetSecondCube();
-                }
+                CheckIfNoMoreAvailableMoves();
                 return true;
             }
 
             //Option 2: Moving to an empty triangle or a triangle which has at least one black checker.
-            ++destinationTriangle.CheckersCount;
-            destinationTriangle.CheckersStack.Push(sourceChecker);
-            if (destinationTriangle.IsEmpty)
-            {
-                destinationTriangle.IsEmpty = false;
-                destinationTriangle.Type = CheckerType.Black;
-            }
-
+            MoveToBlackOrEmptyTriangle(destinationTriangle, sourceChecker);
             UpdateDiceAfterMoveFromDeadBar(triangle);
-            if (!CheckIfThereAreAvailableMoves())
-            {
-                if (Dice.Steps > 0)
-                {
-                    Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
-                }
-                Game.Turn = CheckerType.White;
-                Dice.ResetSecondCube();
-            }
+            CheckIfNoMoreAvailableMoves();
             return true;
         }
 
-        private void MoveToOutsideBar(int triangle, int move)
+        private void MoveToOutsideBar(int triangle)
         {
             var sourceTriangle = Board.Triangles[triangle - 1];
             var sourceChecker = sourceTriangle.CheckersStack.Pop();
@@ -250,53 +248,80 @@ namespace BackgammonLib
             var canMove = false;
             if (!AllCheckersInLocalArea(6, 24) && DeadCheckersBar.Bar.Count == 0)
             {
-                Parallel.For(0, 24, (i) =>
-                {
-                    var destinationTriangle1 = int.MinValue;
-                    var destinationTriangle2 = int.MinValue;
-                    if (Dice.FirstCube != 0)
-                    {
-                        destinationTriangle1 = i - Dice.FirstCube - 1;
-                    }
-                    if (Dice.SecondCube != 0)
-                    {
-                        destinationTriangle2 = i - Dice.SecondCube - 1;
-                    }
-                    if (destinationTriangle1 < 24 && destinationTriangle1 > -1)
-                    {
-                        if (Board.Triangles[destinationTriangle1].CheckersCount == 1 &&
-                            Board.Triangles[destinationTriangle1].Type == CheckerType.White)
-                        {
-                            canMove = true;
-                        }
-                        if (Board.Triangles[destinationTriangle1].Type == CheckerType.None)
-                        {
-                            canMove = true;
-                        }
-                        if (Board.Triangles[destinationTriangle1].Type == CheckerType.Black)
-                        {
-                            canMove = true;
-                        }
-                    }
-                    if (destinationTriangle2 < 24 && destinationTriangle2 > -1)
-                    {
-                        if (Board.Triangles[destinationTriangle2].CheckersCount == 1 &&
-                            Board.Triangles[destinationTriangle2].Type == CheckerType.White)
-                        {
-                            canMove = true;
-                        }
-                        if (Board.Triangles[destinationTriangle2].Type == CheckerType.None)
-                        {
-                            canMove = true;
-                        }
-                        if (Board.Triangles[destinationTriangle2].Type == CheckerType.Black)
-                        {
-                            canMove = true;
-                        }
-                    }
-                });
+                canMove = AnyAvailableMove();
             }
             return canMove;
+        }
+
+        private bool AnyAvailableMove()
+        {
+            bool canMove = false;
+            Parallel.For(0, 24, (i) =>
+            {
+                var destinationTriangle1 = int.MinValue;
+                var destinationTriangle2 = int.MinValue;
+                FindDestinationTriangles(ref destinationTriangle1, i, ref destinationTriangle2);
+                CheckFirstDestination(ref canMove, destinationTriangle1);
+                CheckSecondDestination(destinationTriangle2, ref canMove);
+            });
+            return canMove;
+        }
+
+        private void CheckSecondDestination(int destinationTriangle2, ref bool canMove)
+        {
+            if (destinationTriangle2 < 24 && destinationTriangle2 > -1)
+            {
+                MovingToWhiteTriangleWithOnlyOneChecker(destinationTriangle2, ref canMove);
+                MovingToEmptyTriangle(destinationTriangle2, ref canMove);
+                MovingToBlackTriangle(destinationTriangle2, ref canMove);
+            }
+        }
+
+        private void MovingToBlackTriangle(int destinationTriangle2, ref bool canMove)
+        {
+            if (Board.Triangles[destinationTriangle2].Type == CheckerType.Black)
+            {
+                canMove = true;
+            }
+        }
+
+        private void MovingToEmptyTriangle(int destinationTriangle2, ref bool canMove)
+        {
+            if (Board.Triangles[destinationTriangle2].Type == CheckerType.None)
+            {
+                canMove = true;
+            }
+        }
+
+        private void MovingToWhiteTriangleWithOnlyOneChecker(int destinationTriangle2, ref bool canMove)
+        {
+            if (Board.Triangles[destinationTriangle2].CheckersCount == 1 &&
+                Board.Triangles[destinationTriangle2].Type == CheckerType.White)
+            {
+                canMove = true;
+            }
+        }
+
+        private void CheckFirstDestination(ref bool canMove, int destinationTriangle1)
+        {
+            if (destinationTriangle1 < 24 && destinationTriangle1 > -1)
+            {
+                MovingToWhiteTriangleWithOnlyOneChecker(destinationTriangle1, ref canMove);
+                MovingToEmptyTriangle(destinationTriangle1, ref canMove);
+                MovingToBlackTriangle(destinationTriangle1, ref canMove);
+            }
+        }
+
+        private void FindDestinationTriangles(ref int destinationTriangle1, int i, ref int destinationTriangle2)
+        {
+            if (Dice.FirstCube != 0)
+            {
+                destinationTriangle1 = i - Dice.FirstCube - 1;
+            }
+            if (Dice.SecondCube != 0)
+            {
+                destinationTriangle2 = i - Dice.SecondCube - 1;
+            }
         }
 
         private bool ThereAreAnyavailableMovesFromDeadBar()

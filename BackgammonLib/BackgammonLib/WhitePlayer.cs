@@ -25,7 +25,7 @@ namespace BackgammonLib
             }
             if (triangle + move >= 25)
             {
-                MoveToOutsideBar(triangle, move);
+                MoveToOutsideBar(triangle);
             }
             else
             {
@@ -39,7 +39,7 @@ namespace BackgammonLib
                     Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
                 }
                 Game.Turn = CheckerType.Black;
-                Dice.ResetSecondCube();
+                Dice.ResetDice();
             }
             return true;
         }
@@ -139,7 +139,7 @@ namespace BackgammonLib
             return true;
         }
 
-        internal void MoveToOutsideBar(int triangle, int move)
+        internal void MoveToOutsideBar(int triangle)
         {
             var sourceTriangle = Board.Triangles[triangle - 1];
             var sourceChecker = sourceTriangle.CheckersStack.Pop();
