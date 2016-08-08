@@ -45,10 +45,17 @@
     <Compile Include="BlackOutSideCheckersBar.cs" />
     <Compile Include="BlackPlayer.cs" />
     <Compile Include="Checker.cs" />
+    <Compile Include="CheckerType.cs" />
     <Compile Include="DeadCheckersBar.cs" />
     <Compile Include="Dice.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="GameFinishedEventHandler.cs" />
+    <Compile Include="IBackgammon.cs" />
+    <Compile Include="IChecker.cs" />
+    <Compile Include="IGameBoard.cs" />
+    <Compile Include="IPlayer.cs" />
+    <Compile Include="ITriangle.cs" />
+    <Compile Include="NoAvailableMovesEventArgs.cs" />
     <Compile Include="NoAvailableMovesEventHandler.cs" />
     <Compile Include="OutSideCheckersBar.cs" />
     <Compile Include="Player.cs" />

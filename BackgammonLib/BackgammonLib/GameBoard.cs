@@ -2,18 +2,15 @@
 
 namespace BackgammonLib
 {
-    public class GameBoard
+    public class GameBoard : IGameBoard
     {
         internal GameBoard()
         {
-            Triangles = new List<Triangle>();
+            Triangles = new List<ITriangle>();
             InitializeBoard();
         }
 
-        internal List<Triangle> Triangles;
-        private const int NumOfPoints = 24;
-
-        public IEnumerable<Triangle> AllTriangles => Triangles;
+        public List<ITriangle> Triangles { get; internal set; }
 
         private void InitializeBoard()
         {
@@ -51,5 +48,7 @@ namespace BackgammonLib
                 }
             }
         }
+
+        private const int NumOfPoints = 24;
     }
 }

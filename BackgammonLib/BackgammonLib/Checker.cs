@@ -1,13 +1,6 @@
 ﻿namespace BackgammonLib
 {
-    public enum CheckerType
-    {
-        Black,
-        White,
-        None
-    }
-
-    public class Checker
+    public class Checker : IChecker
     {
         internal Checker(CheckerType t, int triangle, int id, bool alive = true, bool finished = false)
         {
@@ -17,14 +10,15 @@
             CheckerTriangle = triangle;
             CheckerId = id;
         }
-        internal CheckerType Type;
-        internal int CheckerTriangle;
-        internal int CheckerId;
-        internal bool IsAlive;
-        internal bool IsFinished;
 
-        public CheckerType CheckerType => Type;
-        public int CheckerNumber => CheckerId;
-        public int CheckerTraingle => CheckerTriangle;
+        public CheckerType Type { get; internal set; }
+
+        public int CheckerTriangle { get; internal set; }
+
+        public int CheckerId { get; internal set; }
+
+        public bool IsAlive { get; internal set; }
+
+        public bool IsFinished { get; internal set; }
     }
 }

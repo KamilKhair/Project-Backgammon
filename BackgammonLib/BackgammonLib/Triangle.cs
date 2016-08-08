@@ -2,10 +2,11 @@
 
 namespace BackgammonLib
 {
-    public class Triangle
+    public class Triangle : ITriangle
     {
         internal Triangle(CheckerType t, int triangle, int initialId, bool empty = true, int count = 0)
         {
+            CheckersStack = new Stack<IChecker>();
             Type = t;
             IsEmpty = empty;
             CheckersCount = count;
@@ -16,7 +17,7 @@ namespace BackgammonLib
             }
         }
 
-        private void InitializeStack(CheckerType t, int triangle,  int count, int initialId)
+        private void InitializeStack(CheckerType t, int triangle, int count, int initialId)
         {
             for (var i = 0; i < count; ++i)
             {
@@ -24,14 +25,10 @@ namespace BackgammonLib
             }
         }
 
-        internal CheckerType Type;
-        internal bool IsEmpty;
-        internal int CheckersCount;
-        internal int TriangleId;
-        internal Stack<Checker> CheckersStack = new Stack<Checker>();
-
-        public CheckerType TriangleType => Type;
-        public int TrianglrId => TriangleId;
-        public IEnumerable<Checker> Checkers => CheckersStack;
+        public CheckerType Type { get; internal set; }
+        public bool IsEmpty { get; internal set; }
+        public int CheckersCount { get; internal set; }
+        public int TriangleId { get; internal set; }
+        public Stack<IChecker> CheckersStack { get; internal set; }
     }
 }

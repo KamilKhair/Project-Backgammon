@@ -11,7 +11,10 @@ namespace BackgammonLib
         internal override void AddToBar(Backgammon game, Checker checker)
         {
             Bar.Push(checker);
-            if (Bar.Count != 15) return;
+            if (Bar.Count != 15)
+            {
+                return;
+            }
             game.GameOver = true;
             game.Winner = CheckerType.Black;
             game.RaiseGameFinishedEvent();

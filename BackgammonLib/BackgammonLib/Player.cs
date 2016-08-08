@@ -1,11 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace BackgammonLib
+﻿namespace BackgammonLib
 {
-    internal class Player
+    public class Player : IPlayer
     {
-        internal Player(CheckerType type, Backgammon game)
+        public Player(CheckerType type, Backgammon game)
         {
             Type = type;
             Board = game.Board;
@@ -13,44 +10,44 @@ namespace BackgammonLib
             Game = game;
         }
 
+        public virtual bool IsWhitePlayerCanPlay { get; set; }
+        public virtual bool IsBlackPlayerCanPlay { get; set; }
+
+        public virtual bool Roll()
+        {
+            return true;
+        }
+
+        public virtual bool Move(int triangle, int move)
+        {
+            return true;
+        }
+
+        public virtual bool MoveFromDeadBar(int move)
+        {
+            return true;
+        }
+
+        public virtual bool CheckIfThereAreAvailableMoves()
+        {
+            return true;
+        }
+
+        public virtual bool CheckIfCanMove(int triangle, int move)
+        {
+            return true;
+        }
+
+        public virtual bool CheckIfCanMoveFromDeadBar(int triangle)
+        {
+            return true;
+        }
+
         internal CheckerType Type;
-        protected readonly GameBoard Board;
+        protected readonly IGameBoard Board;
         protected readonly Dice Dice;
         protected readonly Backgammon Game;
-
         internal DeadCheckersBar DeadCheckersBar;
         internal OutSideCheckersBar OutSideCheckersBar;
-        internal virtual bool IsWhitePlayerCanPlay { get; set; }
-        internal virtual bool IsBlackPlayerCanPlay { get; set; }
-
-        internal virtual bool Roll()
-        {
-            return true;
-        }
-
-        internal virtual bool Move(int triangle, int move)
-        {
-            return true;
-        }
-
-        internal virtual bool MoveFromDeadBar(int move)
-        {
-            return true;
-        }
-
-        internal virtual bool CheckIfThereAreAvailableMoves()
-        {
-            return true;
-        }
-
-        internal virtual bool CheckIfCanMove(int triangle, int move)
-        {
-            return true;
-        }
-
-        internal virtual bool CheckIfCanMoveFromDeadBar(int triangle)
-        {
-            return true;
-        }
     }
 }
