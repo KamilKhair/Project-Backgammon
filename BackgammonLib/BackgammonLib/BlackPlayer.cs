@@ -2,7 +2,7 @@
 {
     internal class BlackPlayer : Player
     {
-        public BlackPlayer(CheckerType t, Backgammon game) : base(t, game)
+        public BlackPlayer(CheckerType t, IBackgammon game) : base(t, game)
         {
             DeadCheckersBar = new BlackDeadCheckersBar();
             OutSideCheckersBar = new BlackOutSideCheckersBar();
@@ -196,7 +196,7 @@
             }
             if (AllCheckersInLocalArea(6, 24))
             {
-                return true;
+                return AllCheckersInLocalArea(triangle, 24);
             }
             var destinationTriangLe = triangle - move - 1;
             if (destinationTriangLe < 0 || destinationTriangLe > 23)

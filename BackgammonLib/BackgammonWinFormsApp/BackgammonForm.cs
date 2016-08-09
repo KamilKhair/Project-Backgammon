@@ -94,7 +94,7 @@ namespace BackgammonWinFormsApp
         {
             var graphics = _triangles[pixtureBox].CreateGraphics();
             var start = 0;
-            int ratio = 30;
+            var ratio = 30;
             if (triangle.CheckersStack.Count() != 0 && triangle.CheckersStack.Count() * 30 > 223)
             {
                 ratio = 223/triangle.CheckersStack.Count();
@@ -107,9 +107,9 @@ namespace BackgammonWinFormsApp
 
         private void ClearBoard()
         {
-            for (int i = 0; i < 28; i++)
+            for (var i = 0; i < 28; i++)
             {
-                _triangles[i].CreateGraphics().Clear(Color.Aquamarine);
+                _triangles[i].CreateGraphics().Clear(SystemColors.ActiveCaption);
             }
         }
 
@@ -146,7 +146,7 @@ namespace BackgammonWinFormsApp
 
             for (var i = 0; i < 28; ++i)
             {
-                _triangles[i].BackColor = Color.Aquamarine;
+                _triangles[i].BackColor = SystemColors.ActiveCaption;
                 _triangles[i].Click += pictureBox_Click;
             }
         }
