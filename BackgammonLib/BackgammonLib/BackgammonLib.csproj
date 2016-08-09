@@ -49,6 +49,7 @@
     <Compile Include="DeadCheckersBar.cs" />
     <Compile Include="Dice.cs" />
     <Compile Include="GameBoard.cs" />
+    <Compile Include="GameFinishedEventArgs.cs" />
     <Compile Include="GameFinishedEventHandler.cs" />
     <Compile Include="IBackgammon.cs" />
     <Compile Include="IChecker.cs" />
