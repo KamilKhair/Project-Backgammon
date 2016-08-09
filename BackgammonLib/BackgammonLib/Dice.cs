@@ -1,15 +1,14 @@
 ﻿using System;
 namespace BackgammonLib
 {
-    public class Dice
+    public class Dice : IDice
     {
         internal Dice(Backgammon game)
         {
             _game = game;
         }
 
-        public CheckerType CurrentType;
-
+        public CheckerType CurrentType { get; private set; }
         public int Steps { get; private set; }
 
         public int FirstCube { get; private set; }
@@ -38,21 +37,23 @@ namespace BackgammonLib
         {
             if (_game.Turn == CheckerType.Black)
             {
-                if (!_game.BlackPlayer.CheckIfThereAreAvailableMoves())
+                if (_game.BlackPlayer.CheckIfThereAreAvailableMoves())
                 {
-                    _game.Turn = CheckerType.White;
-                    _game.RaiseNoAvailableMovesEvent(FirstCube, SecondCube);
-                    ResetDice();
+                    return;
                 }
+                _game.Turn = CheckerType.White;
+                _game.RaiseNoAvailableMovesEvent(FirstCube, SecondCube);
+                ResetDice();
             }
             else
             {
-                if (!_game.WhitePlayer.CheckIfThereAreAvailableMoves())
+                if (_game.WhitePlayer.CheckIfThereAreAvailableMoves())
                 {
-                    _game.Turn = CheckerType.Black;
-                    _game.RaiseNoAvailableMovesEvent(FirstCube, SecondCube);
-                    ResetDice();
+                    return;
                 }
+                _game.Turn = CheckerType.Black;
+                _game.RaiseNoAvailableMovesEvent(FirstCube, SecondCube);
+                ResetDice();
             }
         }
 

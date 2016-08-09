@@ -5,7 +5,7 @@ namespace BackgammonLib
     {
         internal Stack<Checker> Bar = new Stack<Checker>();
 
-        internal virtual void AddToBar(Backgammon game, Checker checker)
+        internal virtual void AddToBar(IBackgammon game, Checker checker)
         {
             
         }

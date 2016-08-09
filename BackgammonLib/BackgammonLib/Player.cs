@@ -2,12 +2,12 @@
 {
     public class Player : IPlayer
     {
-        public Player(CheckerType type, Backgammon game)
+        public Player(CheckerType type, IBackgammon game)
         {
             Type = type;
-            Board = game.Board;
-            Dice = game.Dice;
-            Game = game;
+            Board = game.Board as GameBoard;
+            Dice = game.Dice as Dice;
+            Game = game as Backgammon;
         }
 
         public virtual bool IsWhitePlayerCanPlay { get; set; }
@@ -45,8 +45,8 @@
 
         internal CheckerType Type;
         protected readonly IGameBoard Board;
-        protected readonly Dice Dice;
-        protected readonly Backgammon Game;
+        protected readonly IDice Dice;
+        protected readonly IBackgammon Game;
         internal DeadCheckersBar DeadCheckersBar;
         internal OutSideCheckersBar OutSideCheckersBar;
     }

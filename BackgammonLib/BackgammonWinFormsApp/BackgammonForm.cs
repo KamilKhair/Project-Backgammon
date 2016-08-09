@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -541,7 +542,7 @@ namespace BackgammonWinFormsApp
 
         private static int GetIndexOfTheCurrentClickedOnPtictureBox(string name)
         {
-            int index = 0;
+            var index = 0;
             if (name != null && !int.TryParse(name[name.Length - 2].ToString() + name[name.Length - 1].ToString(), out index))
             {
                 index = int.Parse(name[name.Length - 1].ToString());
@@ -549,9 +550,9 @@ namespace BackgammonWinFormsApp
             return index;
         }
 
-        private void GameFinishedListener(object o, EventArgs e)
+        private void GameFinishedListener(object o, GameFinishedEventArgs e)
         {
-            var winner = _game.Winner == CheckerType.Black ? "Black Player" : "White Player";
+            var winner = e.Winner == CheckerType.Black ? "Black Player" : "White Player";
             var dialogResult = MessageBox.Show($"The winner is {winner}!, Start a new game?", @"Game Finished!", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
@@ -560,6 +561,10 @@ namespace BackgammonWinFormsApp
             else if (dialogResult == DialogResult.No)
             {
                 Application.Exit();
+            }
+            else
+            {
+                throw new InvalidEnumArgumentException();
             }
         }
 

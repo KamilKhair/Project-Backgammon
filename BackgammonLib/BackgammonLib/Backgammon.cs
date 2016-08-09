@@ -19,7 +19,7 @@ namespace BackgammonLib
         public event GameFinishedEventHandler GameFinished;
         public event NoAvailableMovesEventHandler NoAvailableMoves;
 
-        protected virtual void OnGameFinished(EventArgs e)
+        protected virtual void OnGameFinished(GameFinishedEventArgs e)
         {
             GameFinished?.Invoke(this, e);
         }
@@ -31,7 +31,7 @@ namespace BackgammonLib
 
         internal void RaiseGameFinishedEvent()
         {
-            OnGameFinished(EventArgs.Empty);
+            OnGameFinished(new GameFinishedEventArgs(Winner));
         }
 
         internal void RaiseNoAvailableMovesEvent(int firstCube, int secondCube)
@@ -45,7 +45,7 @@ namespace BackgammonLib
 
         public CheckerType Winner { get; internal set; }
 
-        public Dice Dice => GameDice;
+        public IDice Dice => GameDice;
         public IGameBoard Board => GameBoard;
 
         public int BlackPlayerCurrentCheckers

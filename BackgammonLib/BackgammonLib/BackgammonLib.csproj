@@ -52,6 +52,7 @@
     <Compile Include="GameFinishedEventHandler.cs" />
     <Compile Include="IBackgammon.cs" />
     <Compile Include="IChecker.cs" />
+    <Compile Include="IDice.cs" />
     <Compile Include="IGameBoard.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="ITriangle.cs" />

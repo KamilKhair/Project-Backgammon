@@ -3,7 +3,7 @@
     internal class WhitePlayer : Player
     {
         
-        public WhitePlayer(CheckerType t, Backgammon game) : base(t, game)
+        public WhitePlayer(CheckerType t, IBackgammon game) : base(t, game)
         {
             DeadCheckersBar = new WhiteDeadChechersBar();
             OutSideCheckersBar = new WhiteOutSideCheckersBar();
@@ -27,12 +27,17 @@
             {
                 return;
             }
+            var backgammonGame = Game as Backgammon;
             if (Dice.Steps > 0)
             {
-                Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
+                backgammonGame?.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
             }
-            Game.Turn = CheckerType.Black;
-            Dice.ResetDice();
+            if (backgammonGame != null)
+            {
+                backgammonGame.Turn = CheckerType.Black;
+            }
+
+            (Dice as Dice)?.ResetDice();
         }
 
         private void PerformTheCorrectMove(int triangle, int move)
@@ -117,7 +122,7 @@
             {
                 destinationChecker.CheckerTriangle = -1; // -1 = Dead
                 destinationChecker.IsAlive = false;
-                Game.BlackPlayer.DeadCheckersBar.AddToBar(destinationChecker);
+                (Game as Backgammon)?.BlackPlayer.DeadCheckersBar.AddToBar(destinationChecker);
             }
             destinationTriangle.CheckersStack.Push(sourceChecker);
             destinationTriangle.Type = CheckerType.White;
@@ -177,7 +182,8 @@
 
         public override bool Roll()
         {
-            return Dice.Steps == 0 && Dice.RollDice(CheckerType.White);
+            var rollDice = (Dice as Dice)?.RollDice(CheckerType.White);
+            return rollDice != null && (Dice.Steps == 0 && (bool) rollDice);
         }
 
         public override bool CheckIfCanMove(int triangle, int move)
@@ -239,7 +245,22 @@
             {
                 return true;
             }
-            return ThereAreAnyavailableMovesFromDeadBar() || AllCheckersInLocalArea(0, 18);
+            return ThereAreAnyavailableMovesFromDeadBar() || ThereAreAnyAvailableMovesToOutSide();
+        }
+
+        private bool ThereAreAnyAvailableMovesToOutSide()
+        {
+            if (DeadCheckersBar.Bar.Count > 0 || !AllCheckersInLocalArea(0, 18))
+            {
+                return false;
+            }
+            if (Dice.FirstCube != 0 &&
+                (Board.Triangles[24 - Dice.FirstCube].Type != CheckerType.Black ||
+                 Board.Triangles[24 - Dice.FirstCube].CheckersCount <= 1))
+            {
+                return true;
+            }
+            return Dice.SecondCube != 0 && (Board.Triangles[24 - Dice.SecondCube].Type != CheckerType.Black || Board.Triangles[24 - Dice.SecondCube].CheckersCount <= 1);
         }
 
         private bool ThereAreAnyavailableMoves()
@@ -257,6 +278,10 @@
             var canMove = false;
             for (var i = 0; i < 24; ++i)
             {
+                if (Board.Triangles[i].Type != CheckerType.White)
+                {
+                    continue;
+                }
                 var destinationTriangle1 = int.MinValue;
                 var destinationTriangle2 = int.MinValue;
                 FindDestinationTriangles(ref destinationTriangle1, ref destinationTriangle2, i);
@@ -317,11 +342,11 @@
         {
             if (Dice.FirstCube != 0)
             {
-                destinationTriangle1 = i + Dice.FirstCube - 1;
+                destinationTriangle1 = i + Dice.FirstCube;
             }
             if (Dice.SecondCube != 0)
             {
-                destinationTriangle2 = i + Dice.SecondCube - 1;
+                destinationTriangle2 = i + Dice.SecondCube;
             }
         }
 
@@ -334,7 +359,7 @@
             }
             var destinationTriangle1 = int.MinValue;
             var destinationTriangle2 = int.MinValue;
-            FindDestinationTriangles(ref destinationTriangle1, ref destinationTriangle2, 0);
+            FindDestinationTriangles(ref destinationTriangle1, ref destinationTriangle2, -1);
             CheckFirstDestination(destinationTriangle1, ref canMove);
             CheckSecondDestination(destinationTriangle2, ref canMove);
             return canMove;
@@ -350,26 +375,26 @@
             {
                 if (move == Dice.FirstCube)
                 {
-                    Dice.ResetFirstCube();
+                    (Dice as Dice)?.ResetFirstCube();
                 }
                 else if (move == Dice.SecondCube)
                 {
-                    Dice.ResetSecondCube();
+                    (Dice as Dice)?.ResetSecondCube();
                 }
-                Dice.DecrementSteps();
+                (Dice as Dice)?.DecrementSteps();
             }
         }
 
         private void UpdateDiceWhenReolledDouble()
         {
-            Dice.DecrementSteps();
+            (Dice as Dice)?.DecrementSteps();
             if (Dice.Steps == 2)
             {
-                Dice.ResetFirstCube();
+                (Dice as Dice)?.ResetFirstCube();
             }
             if (Dice.Steps == 0)
             {
-                Dice.ResetSecondCube();
+                (Dice as Dice)?.ResetSecondCube();
             }
         }
 

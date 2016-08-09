@@ -14,7 +14,7 @@ namespace BackgammonLib
 
         CheckerType Winner { get; }
 
-        Dice Dice { get; }
+        IDice Dice { get; }
 
         IGameBoard Board { get; }
 

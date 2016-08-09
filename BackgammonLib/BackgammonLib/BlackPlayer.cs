@@ -26,12 +26,16 @@
             {
                 return;
             }
+            var backgammonGame = Game as Backgammon;
             if (Dice.Steps > 0)
             {
-                Game.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
+                backgammonGame?.RaiseNoAvailableMovesEvent(Dice.FirstCube, Dice.SecondCube);
             }
-            Game.Turn = CheckerType.White;
-            Dice.ResetDice();
+            if (backgammonGame != null)
+            {
+                backgammonGame.Turn = CheckerType.White;
+            }
+            (Dice as Dice)?.ResetDice();
         }
 
         private void PerformTheCorrectMove(int triangle, int move)
@@ -108,7 +112,7 @@
             {
                 destinationChecker.CheckerTriangle = -1; // -1 = Dead;
                 destinationChecker.IsAlive = false;
-                Game.WhitePlayer.DeadCheckersBar.AddToBar(destinationChecker);
+                (Game as Backgammon)?.WhitePlayer.DeadCheckersBar.AddToBar(destinationChecker);
             }
             destinationTriangle.CheckersStack.Push(sourceChecker);
             destinationTriangle.Type = CheckerType.Black;
@@ -168,7 +172,8 @@
 
         public override bool Roll()
         {
-            return Dice.Steps == 0 && Dice.RollDice(CheckerType.Black);
+            var rollDice = (Dice as Dice)?.RollDice(CheckerType.Black);
+            return rollDice != null && (Dice.Steps == 0 && (bool) rollDice);
         }
 
         public override bool CheckIfCanMove(int triangle, int move)
@@ -230,7 +235,22 @@
             {
                 return true;
             }
-            return ThereAreAnyavailableMovesFromDeadBar() || AllCheckersInLocalArea(6, 24);
+            return ThereAreAnyavailableMovesFromDeadBar() || ThereAreAnyAvailableMovesToOutSide();
+        }
+
+        private bool ThereAreAnyAvailableMovesToOutSide()
+        {
+            if (DeadCheckersBar.Bar.Count > 0 || !AllCheckersInLocalArea(6, 24))
+            {
+                return false;
+            }
+            if (Dice.FirstCube != 0 &&
+                (Board.Triangles[Dice.FirstCube - 1].Type != CheckerType.White ||
+                 Board.Triangles[Dice.FirstCube - 1].CheckersCount <= 1))
+            {
+                return true;
+            }
+            return Dice.SecondCube != 0 && (Board.Triangles[Dice.SecondCube - 1].Type != CheckerType.White || Board.Triangles[Dice.SecondCube - 1].CheckersCount <= 1);
         }
 
         private bool ThereAreAnyavailableMoves()
@@ -248,6 +268,10 @@
             var canMove = false;
             for (var i = 0; i < 24; ++i)
             {
+                if (Board.Triangles[i].Type != CheckerType.Black)
+                {
+                    continue;
+                }
                 var destinationTriangle1 = int.MinValue;
                 var destinationTriangle2 = int.MinValue;
                 FindDestinationTriangles(ref destinationTriangle1, i, ref destinationTriangle2);
@@ -308,11 +332,11 @@
         {
             if (Dice.FirstCube != 0)
             {
-                destinationTriangle1 = i - Dice.FirstCube - 1;
+                destinationTriangle1 = i - Dice.FirstCube;
             }
             if (Dice.SecondCube != 0)
             {
-                destinationTriangle2 = i - Dice.SecondCube - 1;
+                destinationTriangle2 = i - Dice.SecondCube;
             }
         }
 
@@ -325,7 +349,7 @@
             }
             var destinationTriangle1 = int.MinValue;
             var destinationTriangle2 = int.MinValue;
-            FindDestinationTriangles(ref destinationTriangle1, 25, ref destinationTriangle2);
+            FindDestinationTriangles(ref destinationTriangle1, 24, ref destinationTriangle2);
             CheckFirstDestination(ref canMove, destinationTriangle1);
             CheckSecondDestination(destinationTriangle2, ref canMove);
             return canMove;
@@ -341,13 +365,13 @@
             {
                 if (move == 24 - Dice.FirstCube + 1)
                 {
-                    Dice.ResetFirstCube();
+                    (Dice as Dice)?.ResetFirstCube();
                 }
                 else if (move == 24 - Dice.SecondCube + 1)
                 {
-                    Dice.ResetSecondCube();
+                    (Dice as Dice)?.ResetSecondCube();
                 }
-                Dice.DecrementSteps();
+                (Dice as Dice)?.DecrementSteps();
             }
         }
 
@@ -361,26 +385,26 @@
             {
                 if (move == Dice.FirstCube)
                 {
-                    Dice.ResetFirstCube();
+                    (Dice as Dice)?.ResetFirstCube();
                 }
                 else if (move == Dice.SecondCube)
                 {
-                    Dice.ResetSecondCube();
+                    (Dice as Dice)?.ResetSecondCube();
                 }
-                Dice.DecrementSteps();
+                (Dice as Dice)?.DecrementSteps();
             }
         }
 
         private void UpdateDiceWhenRolledDouble()
         {
-            Dice.DecrementSteps();
+            (Dice as Dice)?.DecrementSteps();
             if (Dice.Steps == 2)
             {
-                Dice.ResetFirstCube();
+                (Dice as Dice)?.ResetFirstCube();
             }
             if (Dice.Steps == 0)
             {
-                Dice.ResetSecondCube();
+                (Dice as Dice)?.ResetSecondCube();
             }
         }
 
