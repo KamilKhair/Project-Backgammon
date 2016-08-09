@@ -196,7 +196,14 @@
             }
             if (AllCheckersInLocalArea(6, 24))
             {
-                return AllCheckersInLocalArea(triangle, 24);
+                if (triangle - move < 0)
+                {
+                    return AllCheckersInLocalArea(triangle, 24);
+                }
+                if (triangle == move)
+                {
+                    return true;
+                }         
             }
             var destinationTriangLe = triangle - move - 1;
             if (destinationTriangLe < 0 || destinationTriangLe > 23)
