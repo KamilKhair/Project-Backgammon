@@ -196,6 +196,10 @@
             {
                 return false;
             }
+            if (Board.Triangles[triangle - 1].Type != CheckerType.White)
+            {
+                return false;
+            }
             if (move != Dice.FirstCube && move != Dice.SecondCube)
             {
                 return false;
