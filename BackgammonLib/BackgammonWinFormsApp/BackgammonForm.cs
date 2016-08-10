@@ -331,18 +331,31 @@ namespace BackgammonWinFormsApp
         {
             if (index == 27)
             {
-                if (_fromTriangle + _game.Dice.FirstCube >= 25)
-                {
-                    _game.MoveWhite(_fromTriangle, _game.Dice.FirstCube);
-                }
-                else if (_fromTriangle + _game.Dice.SecondCube >= 25)
-                {
-                    _game.MoveWhite(_fromTriangle, _game.Dice.SecondCube);
-                }
+                MoveWhiteToOutSide();
             }
             else
             {
                 _game.MoveWhite(_fromTriangle, index - _fromTriangle);
+            }
+        }
+
+        private void MoveWhiteToOutSide()
+        {
+            if (_fromTriangle == 25 - _game.Dice.FirstCube)
+            {
+                _game.MoveWhite(_fromTriangle, _game.Dice.FirstCube);
+            }
+            else if (_fromTriangle == 25 - _game.Dice.SecondCube)
+            {
+                _game.MoveWhite(_fromTriangle, _game.Dice.SecondCube);
+            }
+            else if (_fromTriangle + _game.Dice.FirstCube >= 25)
+            {
+                _game.MoveWhite(_fromTriangle, _game.Dice.FirstCube);
+            }
+            else if (_fromTriangle + _game.Dice.SecondCube >= 25)
+            {
+                _game.MoveWhite(_fromTriangle, _game.Dice.SecondCube);
             }
         }
 
@@ -422,18 +435,31 @@ namespace BackgammonWinFormsApp
         {
             if (index == 26)
             {
-                if (_fromTriangle <= _game.Dice.FirstCube)
-                {
-                    _game.MoveBlack(_fromTriangle, _game.Dice.FirstCube);
-                }
-                else if (_fromTriangle <= _game.Dice.SecondCube)
-                {
-                    _game.MoveBlack(_fromTriangle, _game.Dice.SecondCube);
-                }
+                MoveBlackToOutside();
             }
             else
             {
                 _game.MoveBlack(_fromTriangle, _fromTriangle - index);
+            }
+        }
+
+        private void MoveBlackToOutside()
+        {
+            if (_fromTriangle == _game.Dice.FirstCube)
+            {
+                _game.MoveWhite(_fromTriangle, _game.Dice.FirstCube);
+            }
+            else if (_fromTriangle == _game.Dice.SecondCube)
+            {
+                _game.MoveWhite(_fromTriangle, _game.Dice.SecondCube);
+            }
+            if (_fromTriangle <= _game.Dice.FirstCube)
+            {
+                _game.MoveBlack(_fromTriangle, _game.Dice.FirstCube);
+            }
+            else if (_fromTriangle <= _game.Dice.SecondCube)
+            {
+                _game.MoveBlack(_fromTriangle, _game.Dice.SecondCube);
             }
         }
 

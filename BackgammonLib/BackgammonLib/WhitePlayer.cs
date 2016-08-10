@@ -208,7 +208,7 @@
             {
                 if (triangle + move > 25)
                 {
-                    return AllCheckersInLocalArea(0, triangle);
+                    return AllCheckersInLocalArea(0, triangle - 1);
                 }
                 if (triangle + move == 25)
                 {
