@@ -13,19 +13,16 @@ namespace BackgammonWinFormsApp
     public partial class BackgammonForm : Form
     {
         private readonly PictureBox[] _triangles = new PictureBox[28];
-        private readonly IBackgammon _game;
+        private IBackgammon _game;
         private bool _firstClick;
         private int _fromTriangle;
         private bool _fromDeadBar;
+        private const int BarWidth = 30;
+
         public BackgammonForm()
         {
             InitializeComponent();
             InitializeCustomComponents();
-            _game = new Backgammon();
-            _turnLabel.Text = Resources.BackgammonForm_BackgammonForm_Turn__Black;
-            _firstClick = true;
-            _game.GameFinished += GameFinishedListener;
-            _game.NoAvailableMoves += NoAvailableMovesListener;
         }
 
         private void DrawBoard()
@@ -61,30 +58,30 @@ namespace BackgammonWinFormsApp
         {
             var graphics = _triangles[pixtureBox].CreateGraphics();
             var start = 0;
-            var ratio = 30;
-            var enumerable = bar.ToArray();
-            if (enumerable.Length != 0 && enumerable.Length * 30 > 223)
+            var ratio = BarWidth;
+            var myBar = bar.ToArray();
+            if (myBar.Length != 0 && myBar.Length * BarWidth > pictureBox1.Size.Height)
             {
-                ratio = 223 / enumerable.Length;
+                ratio = pictureBox1.Size.Height / myBar.Length;
             }
-            for (var i = 0; i < enumerable.Length; ++i)
+            for (var i = 0; i < myBar.Length; ++i)
             {
-                start = DrawChecker(pixtureBox, enumerable, graphics, ratio, start, i);
+                start = DrawChecker(pixtureBox, myBar, graphics, ratio, start, i);
             }
         }
 
-        private static int DrawChecker(int pixtureBox, IEnumerable<IChecker> enumerable, Graphics graphics, int ratio, int start, int i)
+        private int DrawChecker(int pixtureBox, IEnumerable<IChecker> enumerable, Graphics graphics, int ratio, int start, int i)
         {
             var brush = enumerable.ElementAt(i).Type == CheckerType.Black
                 ? new HatchBrush(HatchStyle.DarkVertical, Color.Black)
                 : new HatchBrush(HatchStyle.DarkVertical, Color.White);
             if (pixtureBox < 13)
             {
-                graphics.FillEllipse(brush, 5, 193 - start, 30, 30);
+                graphics.FillEllipse(brush, 5, pictureBox1.Size.Height - BarWidth - start, BarWidth, BarWidth);
             }
             else
             {
-                graphics.FillEllipse(brush, 5, 0 + start, 30, 30);
+                graphics.FillEllipse(brush, 5, 0 + start, BarWidth, BarWidth);
             }
             start += ratio;
             return start;
@@ -94,10 +91,10 @@ namespace BackgammonWinFormsApp
         {
             var graphics = _triangles[pixtureBox].CreateGraphics();
             var start = 0;
-            var ratio = 30;
-            if (triangle.CheckersStack.Count() != 0 && triangle.CheckersStack.Count() * 30 > 223)
+            var ratio = BarWidth;
+            if (triangle.CheckersStack.Count() != 0 && triangle.CheckersStack.Count() * BarWidth > pictureBox1.Size.Height)
             {
-                ratio = 223/triangle.CheckersStack.Count();
+                ratio = pictureBox1.Size.Height/triangle.CheckersStack.Count();
             }
             for (var i = 0; i < triangle.CheckersStack.Count(); ++i)
             {
@@ -115,6 +112,11 @@ namespace BackgammonWinFormsApp
 
         private void InitializeCustomComponents()
         {
+            _game = new Backgammon();
+            _turnLabel.Text = Resources.BackgammonForm_BackgammonForm_Turn__Black;
+            _firstClick = true;
+            _game.GameFinished += GameFinishedListener;
+            _game.NoAvailableMoves += NoAvailableMovesListener;
             _triangles[0] = pictureBox0;
             _triangles[1] = pictureBox1;
             _triangles[2] = pictureBox2;
@@ -158,12 +160,32 @@ namespace BackgammonWinFormsApp
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            var dialogResult = MessageBox.Show($"Do you really want to exit the game?", @"Exit Game", MessageBoxButtons.YesNo);
+            switch (dialogResult)
+            {
+                case DialogResult.Yes:
+                    Application.Exit();
+                    break;
+                case DialogResult.No:
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException();
+            }
         }
 
         private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Restart();
+            var dialogResult = MessageBox.Show($"Do you really want to start a new game?", @"New Game", MessageBoxButtons.YesNo);
+            switch (dialogResult)
+            {
+                case DialogResult.Yes:
+                    Application.Restart();
+                    break;
+                case DialogResult.No:
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException();
+            }
         }
 
         private void RollButton_Click(object sender, EventArgs e)
@@ -245,20 +267,22 @@ namespace BackgammonWinFormsApp
         private void pictureBox_Click(object sender, EventArgs e)
         {
             var triangle = sender as PictureBox;
-            var graphics = triangle?.CreateGraphics();
-            var name = triangle?.Name;
-            var index = GetIndexOfTheCurrentClickedOnPtictureBox(name);
-            if (FirstClickIsIllegal(index))
+            using (var graphics = triangle?.CreateGraphics())
             {
-                return;
-            }
-            if (_game.Turn == CheckerType.Black)
-            {
-                DrawBlackBoundingRectangleOrPerformBlackMove(index, graphics);
-            }
-            else
-            {
-                DrawWhiteBoundingRectangleOrPerformWhiteMove(index, graphics);
+                var name = triangle?.Name;
+                var index = GetIndexOfTheCurrentClickedOnPtictureBox(name);
+                if (FirstClickIsIllegal(index))
+                {
+                    return;
+                }
+                if (_game.Turn == CheckerType.Black)
+                {
+                    DrawBlackBoundingRectangleOrPerformBlackMove(index, graphics);
+                }
+                else
+                {
+                    DrawWhiteBoundingRectangleOrPerformWhiteMove(index, graphics);
+                }
             }
         }
 
@@ -294,21 +318,22 @@ namespace BackgammonWinFormsApp
 
         private bool FirstClickIsIllegal(int index)
         {
-            if (_firstClick)
+            if (!_firstClick)
             {
-                if (_game.Turn == CheckerType.Black)
+                return false;
+            }
+            if (_game.Turn == CheckerType.Black)
+            {
+                if (DrawingBoundingTriangleOnBlackTriangleIsIllegal(index))
                 {
-                    if (DrawingBoundingTriangleOnBlackTriangleIsIllegal(index))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                else
+            }
+            else
+            {
+                if (DrawingBoundingTriangleOnWhiteTriangleIsIllegal(index))
                 {
-                    if (DrawingBoundingTriangleOnWhiteTriangleIsIllegal(index))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             return false;
@@ -361,12 +386,11 @@ namespace BackgammonWinFormsApp
 
         private void DrawWhiteBoundingRectangleAndAvailavleMoves(int index, Graphics graphics)
         {
-            DrawWhiteBoundingRectangle(index, graphics);
-            var firstchoice = index + _game.Dice.FirstCube;
-            
-            TryDrawFirstChoiceOfWhiteBoundingRectangle(firstchoice);
+            DrawWhiteBoundingRectangle(index, graphics);    
 
-            TryDrawSecondChoiceOfWhiteBoundingRectangle(index);
+            TryDrawChoiceOfWhiteBoundingRectangle(index, _game.Dice.FirstCube);
+            TryDrawChoiceOfWhiteBoundingRectangle(index, _game.Dice.SecondCube);
+
             _fromTriangle = index;
             if (index == 0)
             {
@@ -375,32 +399,25 @@ namespace BackgammonWinFormsApp
             _firstClick = false;
         }
 
-        private void TryDrawSecondChoiceOfWhiteBoundingRectangle(int index)
+        private void TryDrawChoiceOfWhiteBoundingRectangle(int index, int cube)
         {
-            var secondChoice = index + _game.Dice.SecondCube;
-            if (secondChoice <= 24 && _game.Dice.SecondCube > 0 && secondChoice >= 1 &&
-                (_game.Board.Triangles.ElementAt(secondChoice - 1).Type == CheckerType.White ||
-                 _game.Board.Triangles.ElementAt(secondChoice - 1).Type == CheckerType.None ||
-                 (_game.Board.Triangles.ElementAt(secondChoice - 1).Type == CheckerType.Black &&
-                  _game.Board.Triangles.ElementAt(secondChoice - 1).CheckersStack.Count() == 1)))
+            var choice = index + cube;
+            if (choice > 24 || cube <= 0 || choice < 1 ||
+                (_game.Board.Triangles.ElementAt(choice - 1).Type != CheckerType.White &&
+                 _game.Board.Triangles.ElementAt(choice - 1).Type != CheckerType.None &&
+                 (_game.Board.Triangles.ElementAt(choice - 1).Type != CheckerType.Black ||
+                  _game.Board.Triangles.ElementAt(choice - 1).CheckersStack.Count() != 1)))
             {
-                var graphics2 = _triangles[secondChoice].CreateGraphics();
-                var pen3 = new Pen(Color.Green, 5);
-                graphics2.DrawRectangle(pen3, 0, 0, 50, 223);
+                return;
             }
-        }
-
-        private void TryDrawFirstChoiceOfWhiteBoundingRectangle(int firstchoice)
-        {
-            if (firstchoice <= 24 && _game.Dice.FirstCube > 0 && firstchoice >= 1 &&
-                (_game.Board.Triangles.ElementAt(firstchoice - 1).Type == CheckerType.White ||
-                 _game.Board.Triangles.ElementAt(firstchoice - 1).Type == CheckerType.None ||
-                 (_game.Board.Triangles.ElementAt(firstchoice - 1).Type == CheckerType.Black &&
-                  _game.Board.Triangles.ElementAt(firstchoice - 1).CheckersStack.Count() == 1)))
+            if (_game.WhiteDeadCheckersBar.Any() && index != 0)
             {
-                var graphics2 = _triangles[firstchoice].CreateGraphics();
-                var pen2 = new Pen(Color.Green, 5);
-                graphics2.DrawRectangle(pen2, 0, 0, 50, 223);
+                return;
+            }
+            using (var graphics = _triangles[choice].CreateGraphics())
+            {
+                var pen3 = new Pen(Color.Green, 5);
+                graphics.DrawRectangle(pen3, 0, 0, 50, 223);
             }
         }
 
@@ -467,9 +484,9 @@ namespace BackgammonWinFormsApp
         {
             DrawBlackBoundingRectangle(index, graphics);
 
-            TryDrawFirstChoiceOfBlackBoundingRectangle(index);
+            TryDrawChoiceOfBlackBoundingRectangle(index, _game.Dice.FirstCube);
+            TryDrawChoiceOfBlackBoundingRectangle(index, _game.Dice.SecondCube);
 
-            TryDrawSecondChoiceOfBlackBoundingRectangle(index);
             _fromTriangle = index;
             if (index == 25)
             {
@@ -492,76 +509,72 @@ namespace BackgammonWinFormsApp
             }
         }
 
-        private void TryDrawSecondChoiceOfBlackBoundingRectangle(int index)
+        private void TryDrawChoiceOfBlackBoundingRectangle(int index, int cube)
         {
-            var secondChoice = index - _game.Dice.SecondCube;
-            if (secondChoice >= 1 && _game.Dice.SecondCube > 0 && secondChoice <= 24 &&
-                (_game.Board.Triangles.ElementAt(secondChoice - 1).Type == CheckerType.Black ||
-                 _game.Board.Triangles.ElementAt(secondChoice - 1).Type == CheckerType.None ||
-                 (_game.Board.Triangles.ElementAt(secondChoice - 1).Type == CheckerType.White &&
-                  _game.Board.Triangles.ElementAt(secondChoice - 1).CheckersStack.Count() == 1)))
+            var choice = index - cube;
+            if (choice < 1 || cube <= 0 || choice > 24 ||
+                (_game.Board.Triangles.ElementAt(choice - 1).Type != CheckerType.Black &&
+                 _game.Board.Triangles.ElementAt(choice - 1).Type != CheckerType.None &&
+                 (_game.Board.Triangles.ElementAt(choice - 1).Type != CheckerType.White ||
+                  _game.Board.Triangles.ElementAt(choice - 1).CheckersStack.Count() != 1)))
             {
-                var graphics2 = _triangles[secondChoice].CreateGraphics();
-                var pen3 = new Pen(Color.Green, 5);
-                graphics2.DrawRectangle(pen3, 0, 0, 50, 223);
+                return;
             }
-        }
-
-        private void TryDrawFirstChoiceOfBlackBoundingRectangle(int index)
-        {
-            var firstchoice = index - _game.Dice.FirstCube;
-            if (firstchoice >= 1 && _game.Dice.FirstCube > 0 && firstchoice <= 24 &&
-                (_game.Board.Triangles.ElementAt(firstchoice - 1).Type == CheckerType.Black ||
-                 _game.Board.Triangles.ElementAt(firstchoice - 1).Type == CheckerType.None ||
-                 (_game.Board.Triangles.ElementAt(firstchoice - 1).Type == CheckerType.White &&
-                  _game.Board.Triangles.ElementAt(firstchoice - 1).CheckersStack.Count() == 1)))
+            if (_game.BlackDeadCheckersBar.Any() && index != 25)
             {
-                var graphics2 = _triangles[firstchoice].CreateGraphics();
-                var pen2 = new Pen(Color.Green, 5);
-                graphics2.DrawRectangle(pen2, 0, 0, 50, 223);
+                return;
+            }
+            using (var graphics = _triangles[choice].CreateGraphics())
+            {
+                var pen3 = new Pen(Color.Green, 5);
+                graphics.DrawRectangle(pen3, 0, 0, 50, 223);
             }
         }
 
         private bool DrawingBoundingTriangleOnWhiteTriangleIsIllegal(int index)
         {
-            if (index == 25)
+            switch (index)
             {
-                return true;
-            }
-            else if (index == 0)
-            {
-                if (!_game.WhiteDeadCheckersBar.Any())
-                {
+                case 25:
                     return true;
-                }
-            }
-            else if (index != 25 && index != 26 && index != 27 &&
-                     (_game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.Black ||
-                      _game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.None))
-            {
-                return true;
+                case 0:
+                    if (!_game.WhiteDeadCheckersBar.Any())
+                    {
+                        return true;
+                    }
+                    break;
+                default:
+                    if (index != 25 && index != 26 && index != 27 &&
+                        (_game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.Black ||
+                         _game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.None))
+                    {
+                        return true;
+                    }
+                    break;
             }
             return false;
         }
 
         private bool DrawingBoundingTriangleOnBlackTriangleIsIllegal(int index)
         {
-            if (index == 0)
+            switch (index)
             {
-                return true;
-            }
-            else if (index == 25)
-            {
-                if (!_game.BlackDeadCheckersBar.Any())
-                {
+                case 0:
                     return true;
-                }
-            }
-            else if (index != 0 && index != 26 && index != 27 &&
-                     (_game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.White ||
-                      _game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.None))
-            {
-                return true;
+                case 25:
+                    if (!_game.BlackDeadCheckersBar.Any())
+                    {
+                        return true;
+                    }
+                    break;
+                default:
+                    if (index != 0 && index != 26 && index != 27 &&
+                        (_game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.White ||
+                         _game.Board.Triangles.ElementAt(index - 1).Type == CheckerType.None))
+                    {
+                        return true;
+                    }
+                    break;
             }
             return false;
         }
@@ -576,21 +589,20 @@ namespace BackgammonWinFormsApp
             return index;
         }
 
-        private void GameFinishedListener(object o, GameFinishedEventArgs e)
+        private static void GameFinishedListener(object o, GameFinishedEventArgs e)
         {
             var winner = e.Winner == CheckerType.Black ? "Black Player" : "White Player";
             var dialogResult = MessageBox.Show($"The winner is {winner}!, Start a new game?", @"Game Finished!", MessageBoxButtons.YesNo);
-            if (dialogResult == DialogResult.Yes)
+            switch (dialogResult)
             {
-                Application.Restart();
-            }
-            else if (dialogResult == DialogResult.No)
-            {
-                Application.Exit();
-            }
-            else
-            {
-                throw new InvalidEnumArgumentException();
+                case DialogResult.Yes:
+                    Application.Restart();
+                    break;
+                case DialogResult.No:
+                    Application.Exit();
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException();
             }
         }
 

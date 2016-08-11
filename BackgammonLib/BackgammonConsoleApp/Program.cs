@@ -20,33 +20,35 @@ namespace BackgammonConsoleApp
                 }
                 else
                 {
-                    int triangle;
-                    var move = 0;
-                    if (game.BlackDeadCheckersBar.Any() && game.Turn == CheckerType.Black)
-                    {
-                        triangle = GetFromUserTriangleToMoveInto(game);
-                    }
-                    else if (game.WhiteDeadCheckersBar.Any() && game.Turn == CheckerType.White)
-                    {
-                        triangle = GetFromUserTriangleToMoveInto(game);
-                    }
-                    else
-                    {
-                        triangle = GetFromUserTriangleToMoveFrom(game);
-                        move = GetFromUserHowManyTrianglesToMove(game, triangle);
-                    }
-                    if (game.Turn == CheckerType.Black)
-                    {
-                        MoveBlack(game, triangle, move);
-                    }
-                    else
-                    {
-                        MoveWhite(game, triangle, move);
-                    }
+                    GetInputFromUserAndMove(game);
                 }
             }
             var winner = game.Winner == CheckerType.Black ? "Black Player" : "White Player";
             Console.WriteLine($"The Winner is {winner}!");
+        }
+
+        private static void GetInputFromUserAndMove(IBackgammon game)
+        {
+            int triangle;
+            var move = 0;
+            if ((game.BlackDeadCheckersBar.Any() && game.Turn == CheckerType.Black) ||
+                (game.WhiteDeadCheckersBar.Any() && game.Turn == CheckerType.White))
+            {
+                triangle = GetFromUserTriangleToMoveInto(game);
+            }
+            else
+            {
+                triangle = GetFromUserTriangleToMoveFrom(game);
+                move = GetFromUserHowManyTrianglesToMove(game, triangle);
+            }
+            if (game.Turn == CheckerType.Black)
+            {
+                MoveBlack(game, triangle, move);
+            }
+            else
+            {
+                MoveWhite(game, triangle, move);
+            }
         }
 
         private static void MoveWhite(IBackgammon game, int triangle, int move)
@@ -167,12 +169,12 @@ namespace BackgammonConsoleApp
         {
             Console.WriteLine();
             Console.Write("White Dead Bar: ");
-            foreach (var ch in game.WhiteDeadCheckersBar)
+            for (var i = 0; i < game.WhiteDeadCheckersBar.Count(); ++i)
             {
                 Console.Write(" ()");
             }
             Console.Write("   White Outside Bar: ");
-            foreach (var ch in game.WhiteOutSideCheckersBar)
+            for (var i = 0; i < game.WhiteOutSideCheckersBar.Count(); ++i)
             {
                 Console.Write(" ()");
             }
@@ -183,12 +185,12 @@ namespace BackgammonConsoleApp
         {
             Console.WriteLine();
             Console.Write("Black Dead Bar: ");
-            foreach (var ch in game.BlackDeadCheckersBar)
+            for (var i = 0; i < game.BlackDeadCheckersBar.Count(); ++i)
             {
                 Console.Write(" ()");
             }
             Console.Write("   Black Outside Bar: ");
-            foreach (var ch in game.BlackOutSideCheckersBar)
+            for (var i = 0; i < game.BlackOutSideCheckersBar.Count(); ++i)
             {
                 Console.Write(" ()");
             }

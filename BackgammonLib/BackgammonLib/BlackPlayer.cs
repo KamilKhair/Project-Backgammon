@@ -128,25 +128,31 @@
             {
                 return false;
             }
+            PerfomMoveFromDeadBar(triangle);
+            return true;
+        }
+
+        private void PerfomMoveFromDeadBar(int triangle)
+        {
             var destinationTriangle = Board.Triangles[triangle - 1] as Triangle;
             var sourceChecker = DeadCheckersBar.RemoveFromBar();
             sourceChecker.IsAlive = true;
             sourceChecker.CheckerTriangle = triangle - 1;
 
             //Option 1: Moving to a triangle which has only one white checker.
-            if (destinationTriangle != null && (destinationTriangle.CheckersCount == 1 && destinationTriangle.Type == CheckerType.White))
+            if (destinationTriangle != null &&
+                (destinationTriangle.CheckersCount == 1 && destinationTriangle.Type == CheckerType.White))
             {
                 KillTheWhiteChecker(destinationTriangle, sourceChecker);
                 UpdateDiceAfterMoveFromDeadBar(triangle);
                 CheckIfNoMoreAvailableMoves();
-                return true;
+                return;
             }
 
             //Option 2: Moving to an empty triangle or a triangle which has at least one black checker.
             MoveToBlackOrEmptyTriangle(destinationTriangle, sourceChecker);
             UpdateDiceAfterMoveFromDeadBar(triangle);
             CheckIfNoMoreAvailableMoves();
-            return true;
         }
 
         private void MoveToOutsideBar(int triangle)
@@ -228,6 +234,10 @@
                 return false;
             }
             if (triangle != 24 - Dice.FirstCube + 1 && triangle != 24 - Dice.SecondCube + 1)
+            {
+                return false;
+            }
+            if (DeadCheckersBar.Bar.Count <= 0)
             {
                 return false;
             }
