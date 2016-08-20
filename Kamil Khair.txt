@@ -1,0 +1,39 @@
+*)Creating many classes and interfaces is necessary sometimes, however it is best to divide them into folders according to some logical order so that the project would be easier to maintain.
+
+*)There's logic in the UI - the Program.MoveWhite and MoveBlack method.
+The UI should not be able to dictate which player rolls the dice, or does anything.
+Having logic in the UI indicates that you would have to rewrite this logic if you ever implement another UI
+The game engine should make all the decisions itself, only notifying the UI of changes in its state
+The only thing the UI should be allowed to do is attempt to make a move.
+
+*)The game engine's implementation must be completely encapsulated- in your case it is not.
+line 258 in Program.cs: 'game.Board.Triangles.'
+
+What if you worked for a company whose product is the game engine, and the company which your clients work for develop user interfaces for it.
+Imagine that one day, your company decided that you need to change the implementation of the game engine by changing the way in which board is implemented.
+This would not be possible without breaking the client code, since any UI has access to the Board and Board.Triangle properties..
+
+any class should expose an API in the form of methods whic enable clients of that class to operate on its state without exposing how it is implemented.
+
+
+*) DeadCheckersBar, OutSideCheckersBar, WhiteDeadCheckersBar and BlackDeadCheckersBar:
+Seems like the base class really does nothing - except having a collection which is internal.
+It might as well be an interface - what is the point of having a method which returns null if some developer forgot to implement it?
+This is poor design, and it seems that both derived classes do the exact same thing.
+Consider that exposing the collection to derived classes also breaks encapsulation.
+what happens on the day that you change the collection which this type uses?
+You break the code of all classes which derived from it..
+
+*)Player: 
+Designing a base class which "knows" about its derived classes is a bad practice
+What happens when you add a third derived class whose name is PinkPlayer.. would you add another 'IsPinkPlayerCanPlay' property?
+A base class is supposed to be a general, common code which derived classes can specialize according to their needs/
+Not a junkyard where you can put whichever properties you desire.
+I am sure you knew this was not the right way (or any way at all), and I am quite surprised that you left this be and submitted this code.
+You can do better than that.
+
+*)Player: Note that virtual methods are meant for when you have a default implementation-
+in the player class, it is clear that you do not have one and you are using the virtual methods as a placeholder.
+In such a case, it would be better to declare the methods abstract, delegating the responsibility to the derived class, 
+instead of making decisions at the base class level
+
